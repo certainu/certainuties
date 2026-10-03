@@ -20,7 +20,7 @@ MIN_EDGE = float(os.getenv("CERTAINU_MIN_EDGE", "5"))
 MAX_OPEN = int(os.getenv("CERTAINU_MAX_OPEN", "5"))
 MAX_NEW = int(os.getenv("CERTAINU_MAX_NEW_PER_RUN", "1"))
 DEMO_REMOVAL_REAL_RESOLVED = int(os.getenv("CERTAINU_DEMO_REMOVAL_REAL_RESOLVED", "10"))
-MODEL_VERSION = "rules-v2"
+MODEL_VERSION = "rules-v2.1"
 
 def now():
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
@@ -53,11 +53,33 @@ def yes_prob(m):
             return f(prices[i]) * 100
     return f(m.get("bestAsk") or m.get("lastTradePrice")) * 100
 
+def _first_numeric(m, keys):
+    """Return the first usable numeric value from common Gamma/API field variants."""
+    for key in keys:
+        value = m.get(key)
+        if value is None or value == "":
+            continue
+        # Some API values can arrive as numeric strings with commas.
+        if isinstance(value, str):
+            value = value.replace(",", "").replace("$", "").strip()
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            continue
+    return 0.0
+
 def market_volume(m):
-    return max(0.0, f(m.get("volume") or m.get("volumeNum")))
+    # Gamma has used several names over time. Prefer lifetime volume, then
+    # recent-window volume as a fallback so schema changes don't zero the scan.
+    return max(0.0, _first_numeric(m, (
+        "volumeNum", "volume", "volumeClob", "volume24hr",
+        "volume1wk", "volume1mo", "volume1yr"
+    )))
 
 def market_liquidity(m):
-    return max(0.0, f(m.get("liquidity") or m.get("liquidityNum")))
+    return max(0.0, _first_numeric(m, (
+        "liquidityNum", "liquidity", "liquidityClob"
+    )))
 
 def market_url(m):
     # Gamma markets can expose an event slug in nested event data.
@@ -146,6 +168,20 @@ def main():
     active = get_json(GAMMA + "?" + qs)
     active_by_id = {str(m.get("id")): m for m in active}
 
+    print(f"[api] received {len(active)} active Polymarket markets")
+    if active:
+        sample = active[0]
+        volume_fields = {
+            k: sample.get(k) for k in (
+                "volume", "volumeNum", "volumeClob", "volume24hr",
+                "volume1wk", "volume1mo", "liquidity", "liquidityNum",
+                "liquidityClob"
+            ) if k in sample
+        }
+        print(f"[api] sample question: {sample.get('question', 'Untitled market')}")
+        print(f"[api] sample volume/liquidity fields: {volume_fields}")
+        print(f"[api] parsed sample volume={market_volume(sample):,.2f}, liquidity={market_liquidity(sample):,.2f}, YES={yes_prob(sample):.2f}%")
+
     refreshed = resolved = 0
 
     # Refresh only genuine open calls. Demo history is never rewritten from Polymarket.
@@ -201,7 +237,16 @@ def main():
         for m in active:
             mid = str(m.get("id") or "")
             vol = market_volume(m)
-            if not mid or mid in byid or vol < MIN_VOLUME:
+            liq_for_filter = market_liquidity(m)
+            if not mid or mid in byid:
+                continue
+
+            # Normal path: require configured volume. If the API response has no
+            # usable volume field for this market, permit sufficiently liquid
+            # markets rather than treating missing volume as genuine $0 volume.
+            volume_ok = vol >= MIN_VOLUME
+            missing_volume_but_liquid = (vol == 0 and liq_for_filter >= MIN_VOLUME)
+            if not (volume_ok or missing_volume_but_liquid):
                 continue
             passed_volume += 1
 
