@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-10-03T23:48:03.770349Z",
-  "model_version": "rules-v2.1",
+  "updated_at": "2026-10-03T23:50:25.432687Z",
+  "model_version": "rules-v2.2",
   "wallet": "TBA at launch",
   "predictions": [
     {
@@ -194,13 +194,34 @@
       "resolved_at": "2026-09-27T18:00:00Z",
       "market_url": "https://polymarket.com/",
       "seeded_demo": true
+    },
+    {
+      "id": "601819",
+      "slug": "will-luiz-incio-lula-da-silva-win-the-2026-brazilian-presidential-election",
+      "question": "Will Luiz In\u00e1cio Lula da Silva win the 2026 Brazilian presidential election?",
+      "pick": "NO",
+      "confidence": 70,
+      "market_probability_at_pick": 35.5,
+      "market_probability_current": 35.5,
+      "edge_at_pick": 5.5,
+      "volume": 14468669.854106985,
+      "liquidity": 382771.482,
+      "locked_at": "2026-10-03T23:50:25.432647Z",
+      "updated_at": "2026-10-03T23:50:25.432663Z",
+      "status": "open",
+      "result": null,
+      "resolved_at": null,
+      "market_url": "https://polymarket.com/event/brazil-presidential-election",
+      "reason": "Rules-v2: market 35.5% YES; volume $14,468,670; liquidity $382,771; quality 0.98; momentum +0.0; model 30.1% YES.",
+      "model_version": "rules-v2.2",
+      "seeded_demo": false
     }
   ],
   "stats": {
     "real_wins": 0,
     "real_losses": 0,
     "real_resolved": 0,
-    "real_open": 0,
+    "real_open": 1,
     "real_accuracy": null,
     "seeded_demo_count": 12
   }
