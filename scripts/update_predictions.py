@@ -20,7 +20,7 @@ MIN_EDGE = float(os.getenv("CERTAINU_MIN_EDGE", "5"))
 MAX_OPEN = int(os.getenv("CERTAINU_MAX_OPEN", "5"))
 MAX_NEW = int(os.getenv("CERTAINU_MAX_NEW_PER_RUN", "1"))
 DEMO_REMOVAL_REAL_RESOLVED = int(os.getenv("CERTAINU_DEMO_REMOVAL_REAL_RESOLVED", "10"))
-MODEL_VERSION = "rules-v2.1"
+MODEL_VERSION = "rules-v2.2"
 
 def now():
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
@@ -161,14 +161,44 @@ def main():
     real_preds = [p for p in preds if not is_demo(p)]
     byid = {str(p.get("id")): p for p in real_preds if p.get("id") is not None}
 
-    qs = urllib.parse.urlencode({
-        "active": "true", "closed": "false", "limit": "100",
-        "order": "volume", "ascending": "false"
-    })
-    active = get_json(GAMMA + "?" + qs)
+    # Fetch a broad active-market universe ourselves instead of trusting the
+    # API's first 100 results to be the highest-volume markets.
+    PAGE_SIZE = 100
+    MAX_MARKETS = 1000
+    active = []
+    seen_ids = set()
+
+    for offset in range(0, MAX_MARKETS, PAGE_SIZE):
+        qs = urllib.parse.urlencode({
+            "active": "true",
+            "closed": "false",
+            "limit": str(PAGE_SIZE),
+            "offset": str(offset)
+        })
+        page = get_json(GAMMA + "?" + qs)
+        if not page:
+            break
+
+        added = 0
+        for m in page:
+            mid = str(m.get("id") or "")
+            if not mid or mid in seen_ids:
+                continue
+            seen_ids.add(mid)
+            active.append(m)
+            added += 1
+
+        print(f"[api] page offset={offset}: received={len(page)}, unique_added={added}")
+
+        if len(page) < PAGE_SIZE:
+            break
+
+    # Rank locally by parsed lifetime/recent volume, with liquidity as a
+    # tiebreaker. This avoids the low-volume first-page problem.
+    active.sort(key=lambda m: (market_volume(m), market_liquidity(m)), reverse=True)
     active_by_id = {str(m.get("id")): m for m in active}
 
-    print(f"[api] received {len(active)} active Polymarket markets")
+    print(f"[api] fetched {len(active)} unique active Polymarket markets")
     if active:
         sample = active[0]
         volume_fields = {
@@ -178,7 +208,7 @@ def main():
                 "liquidityClob"
             ) if k in sample
         }
-        print(f"[api] sample question: {sample.get('question', 'Untitled market')}")
+        print(f"[api] top-volume question: {sample.get('question', 'Untitled market')}")
         print(f"[api] sample volume/liquidity fields: {volume_fields}")
         print(f"[api] parsed sample volume={market_volume(sample):,.2f}, liquidity={market_liquidity(sample):,.2f}, YES={yes_prob(sample):.2f}%")
 
@@ -310,10 +340,10 @@ def main():
 
     best = candidates[0][0] if candidates else None
     print(
-        f"[scan] {scanned} scanned -> {passed_volume} volume -> "
+        f"[scan] {scanned} scanned -> {passed_volume} passed ${MIN_VOLUME:,.0f} volume -> "
         f"{passed_probability} probability -> {passed_edge} edge; "
         f"best edge {best:.1f}%" if best is not None else
-        f"[scan] {scanned} scanned -> {passed_volume} volume -> "
+        f"[scan] {scanned} scanned -> {passed_volume} passed ${MIN_VOLUME:,.0f} volume -> "
         f"{passed_probability} probability -> 0 edge candidates."
     )
     print(f"[run] refreshed={refreshed}, resolved={resolved}, created={created}, real_open={real_open}, demos={sum(is_demo(p) for p in preds)}")
