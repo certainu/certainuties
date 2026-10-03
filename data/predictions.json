@@ -1,6 +1,6 @@
 {
   "updated_at": "2026-10-03T23:30:00Z",
-  "model_version": "rules-v1",
+  "model_version": "rules-v2",
   "wallet": "TBA at launch",
   "predictions": [
     {
@@ -195,5 +195,13 @@
       "market_url": "https://polymarket.com/",
       "seeded_demo": true
     }
-  ]
+  ],
+  "stats": {
+    "real_wins": 0,
+    "real_losses": 0,
+    "real_resolved": 0,
+    "real_open": 0,
+    "real_accuracy": null,
+    "seeded_demo_count": 12
+  }
 }
