@@ -2,7 +2,7 @@ name: Update CERTAINU Predictions
 
 on:
   schedule:
-    - cron: '17 */2 * * *'
+    - cron: '7,37 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -16,7 +16,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Refresh Polymarket data and CERTAINU calls
+      - name: Refresh Polymarket data and add a new CERTAINU call
+        env:
+          CERTAINU_MAX_OPEN: '1000'
+          CERTAINU_MAX_NEW_PER_RUN: '1'
+          CERTAINU_MIN_EDGE: '0'
         run: python scripts/update_predictions.py
       - name: Commit feed changes
         run: |
