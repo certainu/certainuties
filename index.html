@@ -2240,9 +2240,12 @@ async function loadPredictions(){
       predictionList.querySelectorAll('.prediction-card').forEach(card=>{
         card.style.display=(filter==='all'||card.dataset.resolutionBucket===filter)?'':'none';
       });
-      predictionList.classList.remove('prediction-list-collapsed');
-      if(expandBtn) expandBtn.hidden=true;
-      const label=document.getElementById('predictionExpandLabel'); if(label) label.hidden=true;
+      const visibleCards=[...predictionList.querySelectorAll('.prediction-card')].filter(card=>card.style.display!=='none');
+      const shouldCollapse=visibleCards.length>3;
+      predictionList.classList.toggle('prediction-list-collapsed',shouldCollapse);
+      if(expandBtn){ expandBtn.hidden=!shouldCollapse; expandBtn.setAttribute('aria-expanded',shouldCollapse?'false':'true'); }
+      const label=document.getElementById('predictionExpandLabel');
+      if(label){ label.hidden=!shouldCollapse; label.textContent='SHOW MORE'; }
     };
   }
 
