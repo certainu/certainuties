@@ -1822,6 +1822,7 @@ footer .socials{
 
 
 
+
 <style id="certainu-prediction-expand-fix">
 #certainuPredictionExpandWrap{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:18px auto 8px;position:relative;z-index:5}
 #certainuPredictionExpandWrap[hidden]{display:none!important}
@@ -2008,6 +2009,8 @@ footer .socials{
     
 
     
+
+
 
 
 
@@ -2723,6 +2726,7 @@ loadPredictions();</script>
 
 
 
+
 <script id="certainu-prediction-expand-fix-js">
 (function(){
   function initCertainuPredictionExpand(){
@@ -2747,7 +2751,11 @@ loadPredictions();</script>
     function matches(card){
       const time=document.querySelector('#predictionTimeFilters .prediction-time-filter.active')?.dataset.filter||'all';
       const topic=document.querySelector('#predictionTopicFilters .prediction-topic-filter.active')?.dataset.topic||'all';
-      return (time==='all'||card.dataset.resolutionBucket===time)&&(topic==='all'||card.dataset.topicBucket===topic);
+      const bucket=card.dataset.resolutionBucket||'';
+      // ALL means all CURRENT predictions. Resolved calls only appear under RESOLVED.
+      const timeMatch=time==='all' ? bucket!=='resolved' : bucket===time;
+      const topicMatch=topic==='all'||card.dataset.topicBucket===topic;
+      return timeMatch&&topicMatch;
     }
     function refresh(){
       const cards=[...list.querySelectorAll('.prediction-card')];
