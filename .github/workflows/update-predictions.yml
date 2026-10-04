@@ -32,6 +32,8 @@ jobs:
         run: python scripts/update_predictions.py
       - name: Apply CERTAINUTIES resolution categories
         run: python scripts/patch_prediction_categories.py
+      - name: Fix prediction Show More placement
+        run: python scripts/fix_prediction_expand.py
       - name: Commit feed and site changes
         run: |
           git config user.name "CERTAINU Bot"
