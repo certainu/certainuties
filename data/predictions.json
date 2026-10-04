@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-03T23:50:25.432687Z",
+  "updated_at": "2026-10-04T00:08:44.154799Z",
   "model_version": "rules-v2.2",
   "wallet": "TBA at launch",
   "predictions": [
@@ -204,15 +204,36 @@
       "market_probability_at_pick": 35.5,
       "market_probability_current": 35.5,
       "edge_at_pick": 5.5,
-      "volume": 14468669.854106985,
+      "volume": 14473986.797699986,
       "liquidity": 382771.482,
       "locked_at": "2026-10-03T23:50:25.432647Z",
-      "updated_at": "2026-10-03T23:50:25.432663Z",
+      "updated_at": "2026-10-04T00:08:44.149714Z",
       "status": "open",
       "result": null,
       "resolved_at": null,
       "market_url": "https://polymarket.com/event/brazil-presidential-election",
       "reason": "Rules-v2: market 35.5% YES; volume $14,468,670; liquidity $382,771; quality 0.98; momentum +0.0; model 30.1% YES.",
+      "model_version": "rules-v2.2",
+      "seeded_demo": false
+    },
+    {
+      "id": "682705",
+      "slug": "will-benjamin-netanyahu-be-the-next-prime-minister-of-israel",
+      "question": "Will Benjamin Netanyahu be the next Prime Minister of Israel?",
+      "pick": "NO",
+      "confidence": 70,
+      "market_probability_at_pick": 35.5,
+      "market_probability_current": 35.5,
+      "edge_at_pick": 5.5,
+      "volume": 5748733.975629999,
+      "liquidity": 397387.8645,
+      "locked_at": "2026-10-04T00:08:44.154774Z",
+      "updated_at": "2026-10-04T00:08:44.154782Z",
+      "status": "open",
+      "result": null,
+      "resolved_at": null,
+      "market_url": "https://polymarket.com/event/who-will-be-the-next-prime-minister-of-israel-after-the-next-election",
+      "reason": "Rules-v2: market 35.5% YES; volume $5,748,734; liquidity $397,388; quality 0.95; momentum +0.0; model 30.1% YES.",
       "model_version": "rules-v2.2",
       "seeded_demo": false
     }
@@ -221,7 +242,7 @@
     "real_wins": 0,
     "real_losses": 0,
     "real_resolved": 0,
-    "real_open": 1,
+    "real_open": 2,
     "real_accuracy": null,
     "seeded_demo_count": 12
   }
