@@ -23,10 +23,12 @@ jobs:
           CERTAINU_MIN_EDGE: '0'
           CERTAINU_MIN_VOLUME: '5000'
         run: python scripts/update_predictions.py
-      - name: Commit feed changes
+      - name: Apply CERTAINUTIES resolution categories
+        run: python scripts/patch_prediction_categories.py
+      - name: Commit feed and site changes
         run: |
           git config user.name "CERTAINU Bot"
           git config user.email "actions@github.com"
-          git add data/predictions.json
+          git add data/predictions.json index.html
           git diff --cached --quiet || git commit -m "Update CERTAINU predictions"
           git push
