@@ -619,38 +619,67 @@ function updateScore(data){
 async function loadPredictions(){
   const status=document.getElementById('dataStatus');
   const embeddedData={"updated_at":"2026-10-03T23:30:00Z","model_version":"rules-v2.2","wallet":"TBA at launch","predictions":[{"id":"demo-fed-cut","question":"Fed cuts rates at next meeting?","category":"Economy","pick":"YES","certainu_confidence":72,"market_probability_at_lock":61,"current_market_probability":100,"edge_at_lock":11,"status":"RESOLVED","result":"WIN","locked_at":"2026-09-18T18:17:00Z","resolved_at":"2026-09-24T20:00:00Z","market_url":"https://polymarket.com/","seeded_demo":true},{"id":"demo-btc-100k","question":"Bitcoin above $100K by month-end?","category":"Crypto","pick":"YES","certainu_confidence":68,"market_probability_at_lock":57,"current_market_probability":100,"edge_at_lock":11,"status":"RESOLVED","result":"WIN","locked_at":"2026-09-03T14:17:00Z","resolved_at":"2026-09-30T23:59:00Z","market_url":"https://polymarket.com/","seeded_demo":true},{"id":"demo-va-governor","question":"Republicans win Virginia governor race?","category":"Politics","pick":"YES","certainu_confidence":61,"market_probability_at_lock":52,"current_market_probability":0,"edge_at_lock":9,"status":"RESOLVED","result":"LOSS","locked_at":"2026-08-21T16:17:00Z","resolved_at":"2026-09-08T23:00:00Z","market_url":"https://polymarket.com/","seeded_demo":true},{"id":"demo-starship-deadline","question":"SpaceX Starship launches before deadline?","category":"Space","pick":"YES","certainu_confidence":76,"market_probability_at_lock":64,"current_market_probability":100,"edge_at_lock":12,"status":"RESOLVED","result":"WIN","locked_at":"2026-09-09T12:17:00Z","resolved_at":"2026-09-14T19:30:00Z","market_url":"https://polymarket.com/","seeded_demo":true},{"id":"demo-openai-google","question":"OpenAI releases its next major model before Google?","category":"AI / Tech","pick":"YES","certainu_confidence":67,"market_probability_at_lock":55,"current_market_probability":100,"edge_at_lock":12,"status":"RESOLVED","result":"WIN","locked_at":"2026-08-28T20:17:00Z","resolved_at":"2026-09-17T15:00:00Z","market_url":"https://polymarket.com/","seeded_demo":true},{"id":"demo-chiefs-next-game","question":"Chiefs win their next game?","category":"Sports","pick":"YES","certainu_confidence":64,"market_probability_at_lock":56,"current_market_probability":0,"edge_at_lock":8,"status":"RESOLVED","result":"LOSS","locked_at":"2026-09-20T18:17:00Z","resolved_at":"2026-09-21T23:30:00Z","market_url":"https://polymarket.com/","seeded_demo":true},{"id":"demo-eth-3000","question":"Ethereum above $3,000 by Friday?","category":"Crypto","pick":"NO","certainu_confidence":71,"market_probability_at_lock":39,"current_market_probability":0,"edge_at_lock":10,"status":"RESOLVED","result":"WIN","locked_at":"2026-09-23T10:17:00Z","resolved_at":"2026-09-25T23:59:00Z","market_url":"https://polymarket.com/","seeded_demo":true},{"id":"demo-shutdown","question":"Government shutdown ends before deadline?","category":"Politics","pick":"YES","certainu_confidence":79,"market_probability_at_lock":65,"current_market_probability":100,"edge_at_lock":14,"status":"RESOLVED","result":"WIN","locked_at":"2026-09-12T08:17:00Z","resolved_at":"2026-09-16T21:00:00Z","market_url":"https://polymarket.com/","seeded_demo":true},{"id":"demo-btc-green-week","question":"Bitcoin finishes the week green?","category":"Crypto","pick":"YES","certainu_confidence":66,"market_probability_at_lock":54,"current_market_probability":100,"edge_at_lock":12,"status":"RESOLVED","result":"WIN","locked_at":"2026-09-14T12:17:00Z","resolved_at":"2026-09-20T23:59:00Z","market_url":"https://polymarket.com/","seeded_demo":true},{"id":"demo-apple-product","question":"Apple announces a new product this month?","category":"Tech","pick":"YES","certainu_confidence":58,"market_probability_at_lock":51,"current_market_probability":0,"edge_at_lock":7,"status":"RESOLVED","result":"LOSS","locked_at":"2026-08-10T16:17:00Z","resolved_at":"2026-08-31T23:59:00Z","market_url":"https://polymarket.com/","seeded_demo":true},{"id":"demo-fed-hold","question":"Fed leaves rates unchanged?","category":"Economy","pick":"YES","certainu_confidence":74,"market_probability_at_lock":63,"current_market_probability":100,"edge_at_lock":11,"status":"RESOLVED","result":"WIN","locked_at":"2026-08-04T14:17:00Z","resolved_at":"2026-08-12T18:00:00Z","market_url":"https://polymarket.com/","seeded_demo":true},{"id":"demo-spacex-schedule","question":"SpaceX launch occurs on scheduled date?","category":"Space","pick":"NO","certainu_confidence":69,"market_probability_at_lock":42,"current_market_probability":0,"edge_at_lock":11,"status":"RESOLVED","result":"WIN","locked_at":"2026-09-26T09:17:00Z","resolved_at":"2026-09-27T18:00:00Z","market_url":"https://polymarket.com/","seeded_demo":true},{"id":"live-lula-2026-first-pick","question":"Will Luiz In\u00e1cio Lula da Silva win the 2026 Brazilian presidential election?","category":"Politics","pick":"NO","confidence":70,"market_probability_at_pick":35.5,"market_probability_current":35.5,"edge_at_pick":5.5,"status":"open","result":null,"locked_at":"2026-10-03T00:00:00Z","market_url":"https://polymarket.com/","reason":"First genuine automated CERTAINU rules-v2.2 pick created by the GitHub updater.","model_version":"rules-v2.2","seeded_demo":false}],"stats":{"real_wins":0,"real_losses":0,"real_resolved":0,"real_open":0,"real_accuracy":null,"seeded_demo_count":12}};
-  async function tryJson(url,options={}){
+
+  async function fetchJson(url, options={}){
     const r=await fetch(url,{cache:'no-store',...options});
-    if(!r.ok) throw new Error('HTTP '+r.status);
+    if(!r.ok) throw new Error('HTTP '+r.status+' '+url);
     return await r.json();
   }
-  async function tryGithubApi(){
-    const url='https://api.github.com/repos/certainu/certainuties/contents/data/predictions.json?ref=main&ts='+Date.now();
-    const payload=await tryJson(url,{headers:{'Accept':'application/vnd.github+json'}});
-    if(!payload||!payload.content) throw new Error('GitHub API returned no content');
-    const binary=atob(payload.content.replace(/\\s/g,''));
-    const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));
-    return JSON.parse(new TextDecoder().decode(bytes));
+
+  function usable(candidate){
+    return !!candidate &&
+      Array.isArray(candidate.predictions) &&
+      candidate.predictions.length>0 &&
+      String(candidate.model_version||'').startsWith('rules-v2');
   }
-  let data=null,source='embedded snapshot';
-  const attempts=[
-    async()=>['same-site JSON',await tryJson('./data/predictions.json?ts='+Date.now())],
-    async()=>['GitHub API',await tryGithubApi()],
-    async()=>['GitHub raw',await tryJson('https://raw.githubusercontent.com/certainu/certainuties/main/data/predictions.json?ts='+Date.now())]
+
+  async function fetchGithubApi(){
+    const url='https://api.github.com/repos/certainu/certainuties/contents/data/predictions.json?ref=main&_='+Date.now();
+    const payload=await fetchJson(url,{headers:{Accept:'application/vnd.github+json'}});
+    if(!payload.content) throw new Error('GitHub API returned no file content');
+    const clean=payload.content.replace(/\\s/g,'');
+    const raw=atob(clean);
+    const bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));
+    return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+  }
+
+  let data=null;
+  let source='BUILT-IN SNAPSHOT';
+
+  const loaders=[
+    ['SAME-SITE JSON',()=>fetchJson('./data/predictions.json?_='+Date.now())],
+    ['GITHUB API',()=>fetchGithubApi()],
+    ['GITHUB RAW',()=>fetchJson('https://raw.githubusercontent.com/certainu/certainuties/main/data/predictions.json?_='+Date.now())]
   ];
-  for(const attempt of attempts){
+
+  for(const [name,loader] of loaders){
     try{
-      const [name,candidate]=await attempt();
-      const hasPredictions=Array.isArray(candidate?.predictions)&&candidate.predictions.length>0;
-      const isModern=String(candidate?.model_version||'').startsWith('rules-v2');
-      if(hasPredictions&&isModern){data=candidate;source=name;break;}
-    }catch(e){console.warn('CERTAINU prediction source failed:',e);}
+      const candidate=await loader();
+      if(usable(candidate)){
+        data=candidate;
+        source='LIVE '+name;
+        break;
+      }
+      console.warn('CERTAINU ignored stale/empty prediction feed from '+name,candidate);
+    }catch(err){
+      console.warn('CERTAINU prediction source failed: '+name,err);
+    }
   }
-  if(!data)data=embeddedData;
+
+  if(!data) data=embeddedData;
+
   updateScore(data);
-  document.getElementById('predictionList').innerHTML=(data.predictions||[]).slice().sort((a,b)=>new Date(b.locked_at||b.created_at||0)-new Date(a.locked_at||a.created_at||0)).map(renderPrediction).join('')||'<article class="prediction-card"><h3>No official calls yet.</h3></article>';
-  status.textContent=`${source==='embedded snapshot'?'BUILT-IN SNAPSHOT':'LIVE '+source.toUpperCase()} • LAST REFRESH ${fmtDate(data.updated_at)} • AUTO-REFRESH ≈ EVERY 2 HOURS • MODEL ${data.model_version||'rules-v2.2'}`;
-  if(data.wallet){document.getElementById('walletLabel').textContent='Official CERTAINU wallet: '+data.wallet;}
+  const predictions=(data.predictions||[]).slice().sort((a,b)=>
+    new Date(b.locked_at||b.created_at||0)-new Date(a.locked_at||a.created_at||0)
+  );
+  document.getElementById('predictionList').innerHTML=
+    predictions.map(renderPrediction).join('') ||
+    '<article class="prediction-card"><h3>No official calls yet.</h3></article>';
+
+  status.textContent=`${source} • LAST REFRESH ${fmtDate(data.updated_at)} • AUTO-REFRESH ≈ EVERY 2 HOURS • MODEL ${data.model_version||'rules-v2.2'}`;
+  if(data.wallet){
+    document.getElementById('walletLabel').textContent='Official CERTAINU wallet: '+data.wallet;
+  }
 }
 loadPredictions();</script>
 </body></html>
