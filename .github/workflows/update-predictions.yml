@@ -18,9 +18,10 @@ jobs:
           python-version: '3.12'
       - name: Refresh Polymarket data and add a new CERTAINU call
         env:
-          CERTAINU_MAX_OPEN: '1000'
+          CERTAINU_MAX_OPEN: '100'
+          CERTAINU_MAX_RESOLVED: '1000'
           CERTAINU_MAX_NEW_PER_RUN: '1'
-          CERTAINU_MAX_VISIBLE: '100'
+          CERTAINU_MAX_VISIBLE: '1100'
           CERTAINU_MAX_LONG_OPEN: '6'
           CERTAINU_MAX_CRYPTO_OPEN: '24'
           CERTAINU_CRYPTO_BONUS: '6'
