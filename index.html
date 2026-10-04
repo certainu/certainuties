@@ -1992,6 +1992,7 @@ footer .socials{
       <button type="button" class="prediction-time-filter" data-filter="short">🔥 SHORT 1–3D <span id="count-short">0</span></button>
       <button type="button" class="prediction-time-filter" data-filter="week">🎯 THIS WEEK <span id="count-week">0</span></button>
       <button type="button" class="prediction-time-filter" data-filter="long">🔮 LONG TERM <span id="count-long">0</span></button>
+      <button type="button" class="prediction-time-filter" data-filter="resolved">✅ RESOLVED <span id="count-resolved">0</span></button>
     </div>
 
     <div class="prediction-list" id="predictionList">
@@ -2212,7 +2213,7 @@ async function loadPredictions(){
   const expandBtn=document.getElementById('predictionExpandBtn');
   function resolutionBucket(raw){
     const p=normalizePrediction(raw);
-    if(['won','lost','void'].includes(p.status)) return 'long';
+    if(['won','lost','void','resolved'].includes(p.status) || p.resolved_at) return 'resolved';
     const end=Date.parse(p.market_end_date||'');
     if(!end) return 'long';
     const hours=(end-Date.now())/3600000;
@@ -2221,7 +2222,7 @@ async function loadPredictions(){
     if(hours<=168) return 'week';
     return 'long';
   }
-  const bucketCounts={all:predictions.length,quick:0,short:0,week:0,long:0};
+  const bucketCounts={all:predictions.length,quick:0,short:0,week:0,long:0,resolved:0};
   predictions.forEach(p=>bucketCounts[resolutionBucket(p)]++);
   predictionList.innerHTML=
     predictions.map(p=>renderPrediction(p).replace('<article class="prediction-card','<article data-resolution-bucket="'+resolutionBucket(p)+'" class="prediction-card')).join('') ||
