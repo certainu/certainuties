@@ -1816,8 +1816,7 @@ footer .socials{
 </style>
 
 <style id="certainu-filter-enhancements">
-.prediction-time-filters,.prediction-topic-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.prediction-time-filters{margin:0 0 10px}.prediction-topic-filters{margin:0 0 20px;padding-top:2px}.prediction-time-filter,.prediction-topic-filter{border:1px solid rgba(255,255,255,.22);background:rgba(7,24,79,.25);color:rgba(255,255,255,.82);border-radius:999px;padding:10px 13px;font-size:9px;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:.18s ease}.prediction-topic-filter{padding:8px 12px;font-size:8px;background:rgba(7,24,79,.16)}.prediction-time-filter:hover,.prediction-topic-filter:hover{background:rgba(255,255,255,.12);color:#fff;transform:translateY(-1px)}.prediction-time-filter.active,.prediction-topic-filter.active{background:#fff;color:#1747df;border-color:#fff;box-shadow:0 8px 20px rgba(4,18,76,.16)}.prediction-time-filter span{opacity:.7;margin-left:4px}.prediction-filter-label{font-size:8px;font-weight:900;letter-spacing:.16em;color:rgba(255,255,255,.55);margin-right:2px}
-.certainu-confidence-pill,.confidence-pill,.confidence-scale span,.confidence-legend span,.certainty-scale span,.certainty-legend span{display:inline-flex!important;align-items:center;justify-content:center;min-height:42px;padding:11px 18px!important;border:2px solid rgba(255,255,255,.42)!important;border-radius:999px!important;background:rgba(13,54,178,.52)!important;color:#fff!important;font-size:12px!important;font-weight:900!important;line-height:1.1!important;letter-spacing:.035em!important;box-shadow:0 5px 14px rgba(5,24,100,.18),inset 0 1px 0 rgba(255,255,255,.08)!important}.confidence-scale,.confidence-legend,.certainty-scale,.certainty-legend{gap:12px!important;align-items:center!important;flex-wrap:wrap!important}@media(max-width:600px){.prediction-time-filters,.prediction-topic-filters{gap:6px}.prediction-time-filter{padding:9px 10px;font-size:8px}.prediction-topic-filter{padding:7px 9px;font-size:7px}.certainu-confidence-pill,.confidence-pill,.confidence-scale span,.confidence-legend span,.certainty-scale span,.certainty-legend span{min-height:38px;padding:9px 13px!important;font-size:10px!important}}
+.prediction-time-filters,.prediction-topic-filters{display:flex!important;gap:8px;flex-wrap:wrap;align-items:center;visibility:visible!important;opacity:1!important}.prediction-time-filters{margin:0 0 10px}.prediction-topic-filters{margin:0 0 20px;padding-top:2px}.prediction-time-filter,.prediction-topic-filter{border:1px solid rgba(255,255,255,.22);background:rgba(7,24,79,.25);color:rgba(255,255,255,.82);border-radius:999px;padding:10px 13px;font-size:9px;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:.18s ease}.prediction-topic-filter{padding:8px 12px;font-size:8px;background:rgba(7,24,79,.16)}.prediction-time-filter:hover,.prediction-topic-filter:hover{background:rgba(255,255,255,.12);color:#fff;transform:translateY(-1px)}.prediction-time-filter.active,.prediction-topic-filter.active{background:#fff;color:#1747df;border-color:#fff;box-shadow:0 8px 20px rgba(4,18,76,.16)}.prediction-time-filter span{opacity:.7;margin-left:4px}.prediction-filter-label{font-size:8px;font-weight:900;letter-spacing:.16em;color:rgba(255,255,255,.62);margin-right:2px}.certainu-confidence-pill,.confidence-pill,.confidence-scale span,.confidence-legend span,.certainty-scale span,.certainty-legend span{display:inline-flex!important;align-items:center;justify-content:center;min-height:42px;padding:11px 18px!important;border:2px solid rgba(255,255,255,.42)!important;border-radius:999px!important;background:rgba(13,54,178,.52)!important;color:#fff!important;font-size:12px!important;font-weight:900!important;line-height:1.1!important;letter-spacing:.035em!important;box-shadow:0 5px 14px rgba(5,24,100,.18),inset 0 1px 0 rgba(255,255,255,.08)!important}.confidence-scale,.confidence-legend,.certainty-scale,.certainty-legend{gap:12px!important;align-items:center!important;flex-wrap:wrap!important}@media(max-width:600px){.prediction-time-filters,.prediction-topic-filters{gap:6px}.prediction-time-filter{padding:9px 10px;font-size:8px}.prediction-topic-filter{padding:7px 9px;font-size:7px}.certainu-confidence-pill,.confidence-pill,.confidence-scale span,.confidence-legend span,.certainty-scale span,.certainty-legend span{min-height:38px;padding:9px 13px!important;font-size:10px!important}}
 </style>
 </head>
 <body>
@@ -1996,16 +1995,28 @@ footer .socials{
     </div>
 
 
-    <div class="prediction-time-filters reveal" id="predictionTimeFilters" aria-label="Filter predictions by resolution time">
-      <button type="button" class="prediction-time-filter active" data-filter="all">ALL <span id="count-all">0</span></button>
-      <button type="button" class="prediction-time-filter" data-filter="quick">⚡ QUICK ≤24H <span id="count-quick">0</span></button>
-      <button type="button" class="prediction-time-filter" data-filter="short">🔥 SHORT 1–3D <span id="count-short">0</span></button>
-      <button type="button" class="prediction-time-filter" data-filter="week">🎯 THIS WEEK <span id="count-week">0</span></button>
-      <button type="button" class="prediction-time-filter" data-filter="long">🔮 LONG TERM <span id="count-long">0</span></button>
-      <button type="button" class="prediction-time-filter" data-filter="resolved">✅ RESOLVED <span id="count-resolved">0</span></button>
-    </div>
+    
 
-    <div class="prediction-list" id="predictionList">
+    <div class="prediction-time-filters reveal" id="predictionTimeFilters" aria-label="Filter predictions by resolution time">
+<button type="button" class="prediction-time-filter active" data-filter="all">ALL <span id="count-all">0</span></button>
+<button type="button" class="prediction-time-filter" data-filter="quick">⚡ QUICK ≤24H <span id="count-quick">0</span></button>
+<button type="button" class="prediction-time-filter" data-filter="short">🔥 SHORT 1–3D <span id="count-short">0</span></button>
+<button type="button" class="prediction-time-filter" data-filter="week">🎯 THIS WEEK <span id="count-week">0</span></button>
+<button type="button" class="prediction-time-filter" data-filter="long">🔮 LONG TERM <span id="count-long">0</span></button>
+<button type="button" class="prediction-time-filter" data-filter="resolved">✅ RESOLVED <span id="count-resolved">0</span></button>
+</div>
+<div class="prediction-topic-filters reveal" id="predictionTopicFilters" aria-label="Filter predictions by topic">
+<span class="prediction-filter-label">TOPIC</span>
+<button type="button" class="prediction-topic-filter active" data-topic="all">ALL TOPICS</button>
+<button type="button" class="prediction-topic-filter" data-topic="crypto">🪙 CRYPTO</button>
+<button type="button" class="prediction-topic-filter" data-topic="politics">🏛️ POLITICS</button>
+<button type="button" class="prediction-topic-filter" data-topic="geopolitics">🌎 GEOPOLITICS</button>
+<button type="button" class="prediction-topic-filter" data-topic="sports">🏈 SPORTS</button>
+<button type="button" class="prediction-topic-filter" data-topic="economy">💰 ECONOMY</button>
+<button type="button" class="prediction-topic-filter" data-topic="culture">🎭 CULTURE</button>
+<button type="button" class="prediction-topic-filter" data-topic="other">• OTHER</button>
+</div>
+<div class="prediction-list" id="predictionList">
       <article class="prediction-card reveal"><h3>Loading CERTAINU's latest calls…</h3></article>
     </div>
     <div class="prediction-expand-wrap">
