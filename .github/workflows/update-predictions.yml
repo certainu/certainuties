@@ -16,6 +16,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Seed labeled pre-live resolved calls
+        run: python scripts/seed_pre_live_calls.py
       - name: Refresh Polymarket data and add a new CERTAINU call
         env:
           CERTAINU_MAX_OPEN: '100'
