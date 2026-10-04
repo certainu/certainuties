@@ -1,24 +1,15 @@
 #!/usr/bin/env python3
-"""CERTAINU updater with strong short-term preference and a hard long-term cap."""
+"""CERTAINU updater with short-term preference, long-term cap, and moderate crypto tilt."""
 import json, math, os, urllib.parse, urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
 DATA=Path(__file__).resolve().parents[1]/"data"/"predictions.json"
 GAMMA="https://gamma-api.polymarket.com/markets"
-MIN_VOLUME=float(os.getenv("CERTAINU_MIN_VOLUME","5000"))
-MIN_EDGE=float(os.getenv("CERTAINU_MIN_EDGE","0"))
-MAX_OPEN=int(os.getenv("CERTAINU_MAX_OPEN","1000"))
-MAX_NEW=int(os.getenv("CERTAINU_MAX_NEW_PER_RUN","1"))
-MAX_VISIBLE=int(os.getenv("CERTAINU_MAX_VISIBLE","50"))
-MAX_LONG_OPEN=int(os.getenv("CERTAINU_MAX_LONG_OPEN","6"))
-DEMO_REMOVAL_REAL_RESOLVED=int(os.getenv("CERTAINU_DEMO_REMOVAL_REAL_RESOLVED","10"))
-MODEL_VERSION="rules-v2.4-short"
-
+MIN_VOLUME=float(os.getenv("CERTAINU_MIN_VOLUME","5000"));MIN_EDGE=float(os.getenv("CERTAINU_MIN_EDGE","0"));MAX_OPEN=int(os.getenv("CERTAINU_MAX_OPEN","1000"));MAX_NEW=int(os.getenv("CERTAINU_MAX_NEW_PER_RUN","1"));MAX_VISIBLE=int(os.getenv("CERTAINU_MAX_VISIBLE","50"));MAX_LONG_OPEN=int(os.getenv("CERTAINU_MAX_LONG_OPEN","6"));MAX_CRYPTO_OPEN=int(os.getenv("CERTAINU_MAX_CRYPTO_OPEN","12"));CRYPTO_BONUS=float(os.getenv("CERTAINU_CRYPTO_BONUS","6"));DEMO_REMOVAL_REAL_RESOLVED=int(os.getenv("CERTAINU_DEMO_REMOVAL_REAL_RESOLVED","10"));MODEL_VERSION="rules-v2.5-crypto-tilt"
 def now():return datetime.now(timezone.utc).isoformat().replace('+00:00','Z')
 def get_json(url):
- req=urllib.request.Request(url,headers={'User-Agent':'CERTAINU/2.0','Accept':'application/json'})
- with urllib.request.urlopen(req,timeout=30) as r:return json.load(r)
+ req=urllib.request.Request(url,headers={'User-Agent':'CERTAINU/2.0','Accept':'application/json'});return json.load(urllib.request.urlopen(req,timeout=30))
 def arr(v):
  if isinstance(v,list):return v
  if isinstance(v,str):
@@ -36,7 +27,7 @@ def yes_prob(m):
 def num(m,keys):
  for k in keys:
   v=m.get(k)
-  if v in (None,''):continue
+  if v in(None,''):continue
   try:return float(str(v).replace(',','').replace('$','').strip())
   except:pass
  return 0.0
@@ -63,35 +54,36 @@ def bucket_pred(p):
  except:return 'long'
  return bucket_hours(h)
 def speed_score(h):
- # Deliberately aggressive: near-term markets should beat long-term markets unless quality is much worse.
- if h is None:return -20.0
- if h<=0:return -100.0
- if h<=24:return 30.0
- if h<=72:return 24.0
- if h<=168:return 15.0
- if h<=336:return 2.0
- if h<=720:return -8.0
- return -18.0
+ if h is None:return -20
+ if h<=0:return -100
+ if h<=24:return 30
+ if h<=72:return 24
+ if h<=168:return 15
+ if h<=336:return 2
+ if h<=720:return -8
+ return -18
+def crypto_market(x):
+ # Moderate category tilt, not a crypto-only feed. Use question/slug/event text because Gamma metadata varies by market.
+ text=' '.join(str(x.get(k) or '') for k in ('question','slug','eventSlug','description')).lower()
+ ev=x.get('events') or []
+ if isinstance(ev,list):text+=' '+' '.join(str((e or {}).get(k) or '') for e in ev for k in ('title','slug','description'))
+ terms=('bitcoin',' btc','btc ','ethereum',' eth','eth ','solana',' sol','sol ','crypto','cryptocurrency','dogecoin',' doge','xrp','ripple','cardano',' ada','chainlink','link price','bnb','avalanche','avax','sui','memecoin','meme coin')
+ return any(t in text for t in terms)
+def crypto_pred(p):return crypto_market({'question':p.get('question'),'slug':p.get('slug'),'eventSlug':p.get('eventSlug'),'description':p.get('description')})
 def market_url(m):
- ev=m.get('events') or [];es=str((ev[0] or {}).get('slug') or '') if isinstance(ev,list) and ev else '';slug=es or str(m.get('eventSlug') or m.get('slug') or '')
- return f'https://polymarket.com/event/{slug}' if slug else 'https://polymarket.com/'
+ ev=m.get('events') or [];es=str((ev[0] or {}).get('slug') or '') if isinstance(ev,list) and ev else '';slug=es or str(m.get('eventSlug') or m.get('slug') or '');return f'https://polymarket.com/event/{slug}' if slug else 'https://polymarket.com/'
 def model(m):
  p=yes_prob(m);v=volume(m);l=liquidity(m);vq=min(1,math.log10(max(v,10))/7);lq=min(1,math.log10(max(l,10))/6) if l else vq*.75;q=max(.2,min(1,.65*vq+.35*lq));ext=(-7*q if p>=80 else 7*q if p<=20 else -3.5*q if p>=68 else 3.5*q if p<=32 else 0);center=abs(p-50)/50;conv=(5.2+2.8*q)*(.55+.45*center);est=max(5,min(95,p+ext+(1 if p>=50 else -1)*conv));pick='YES' if est>=50 else 'NO';conf=round(est if pick=='YES' else 100-est);side=p if pick=='YES' else 100-p;edge=conf-side;reason=f'Rules-v2: market {p:.1f}% YES; volume ${v:,.0f}; liquidity ${l:,.0f}; quality {q:.2f}; model {est:.1f}% YES.';return pick,conf,edge,reason,p,v,l
 def status(p):
  s=str(p.get('status','')).lower()
  if s=='resolved':
-  r=str(p.get('result','')).upper()
-  return 'won' if r=='WIN' else 'lost' if r=='LOSS' else s
+  r=str(p.get('result','')).upper();return 'won' if r=='WIN' else 'lost' if r=='LOSS' else s
  return s
 def demo(p):return bool(p.get('seeded_demo',False))
-
 def main():
- state=json.loads(DATA.read_text()) if DATA.exists() else {'predictions':[]};preds=state.setdefault('predictions',[]);retired={str(x) for x in state.setdefault('retired_market_ids',[])}
- real=[p for p in preds if not demo(p)];byid={str(p.get('id')):p for p in real if p.get('id') is not None}
- active=[];seen=set()
+ state=json.loads(DATA.read_text()) if DATA.exists() else {'predictions':[]};preds=state.setdefault('predictions',[]);retired={str(x) for x in state.setdefault('retired_market_ids',[])};real=[p for p in preds if not demo(p)];byid={str(p.get('id')):p for p in real if p.get('id') is not None};active=[];seen=set()
  for offset in range(0,1000,100):
-  qs=urllib.parse.urlencode({'active':'true','closed':'false','limit':'100','offset':offset})
-  try:page=get_json(GAMMA+'?'+qs)
+  try:page=get_json(GAMMA+'?'+urllib.parse.urlencode({'active':'true','closed':'false','limit':'100','offset':offset}))
   except Exception as e:print(f'[scan] stopped at offset {offset}: {e}');break
   if not page:break
   for m in page:
@@ -101,50 +93,41 @@ def main():
  active_by={str(m.get('id')):m for m in active};resolved=0
  for p in real:
   if status(p)!='open':continue
-  mid=str(p.get('id'));m=active_by.get(mid)
-  if m is None:
+  m=active_by.get(str(p.get('id')))
+  if not m:
    try:
-    exact=get_json(GAMMA+'?'+urllib.parse.urlencode({'id':mid}));m=exact[0] if exact else None
+    x=get_json(GAMMA+'?'+urllib.parse.urlencode({'id':str(p.get('id'))}));m=x[0] if x else None
    except:m=None
   if not m:continue
   cur=yes_prob(m);p['market_probability_current']=round(cur,2);p['volume']=volume(m);p['updated_at']=now()
   if m.get('closed') or cur>=99 or cur<=1:
    outcome='YES' if cur>=99 else 'NO' if cur<=1 else None
    if outcome:p['result']=outcome;p['status']='won' if outcome==str(p.get('pick','')).upper() else 'lost';p['resolved_at']=now();resolved+=1
- real_resolved=sum(status(p) in ('won','lost') for p in real)
+ real_resolved=sum(status(p) in('won','lost') for p in real)
  if real_resolved>=DEMO_REMOVAL_REAL_RESOLVED:preds[:]=[p for p in preds if not demo(p)]
- real=[p for p in preds if not demo(p)];byid={str(p.get('id')):p for p in real if p.get('id') is not None};open_preds=[p for p in real if status(p)=='open'];open_count=len(open_preds);long_open=sum(bucket_pred(p)=='long' for p in open_preds)
- candidates=[];bucket_counts={'quick':0,'short':0,'week':0,'long':0}
+ real=[p for p in preds if not demo(p)];byid={str(p.get('id')):p for p in real if p.get('id') is not None};open_preds=[p for p in real if status(p)=='open'];open_count=len(open_preds);long_open=sum(bucket_pred(p)=='long' for p in open_preds);crypto_open=sum(crypto_pred(p) for p in open_preds);candidates=[];bucket_counts={'quick':0,'short':0,'week':0,'long':0};crypto_qualifying=0
  if open_count<MAX_OPEN:
   for m in active:
    mid=str(m.get('id') or '');v=volume(m);l=liquidity(m)
-   if not mid or mid in byid or mid in retired:continue
-   if not(v>=MIN_VOLUME or(v==0 and l>=MIN_VOLUME)):continue
+   if not mid or mid in byid or mid in retired or not(v>=MIN_VOLUME or(v==0 and l>=MIN_VOLUME)):continue
    p0=yes_prob(m)
    if p0<=3 or p0>=97:continue
    h=hours_left(m);b=bucket_hours(h)
-   if b=='expired':continue
-   if b=='long' and long_open>=MAX_LONG_OPEN:continue
+   if b=='expired' or(b=='long' and long_open>=MAX_LONG_OPEN):continue
+   iscrypto=crypto_market(m)
+   if iscrypto and crypto_open>=MAX_CRYPTO_OPEN:continue
    pick,conf,edge,reason,yesp,v,l=model(m)
    if edge<MIN_EDGE:continue
-   uncertainty=2 if 10<=p0<=90 else -2;quality=min(2,math.log10(max(v,1))/4)+min(1.5,math.log10(max(l,1))/4 if l else 0)
-   score=edge+speed_score(h)+uncertainty+quality
-   candidates.append((score,edge,v,m,pick,conf,reason,yesp,l,h,b));bucket_counts[b]+=1
+   uncertainty=2 if 10<=p0<=90 else -2;quality=min(2,math.log10(max(v,1))/4)+min(1.5,math.log10(max(l,1))/4 if l else 0);score=edge+speed_score(h)+uncertainty+quality+(CRYPTO_BONUS if iscrypto else 0)
+   candidates.append((score,edge,v,m,pick,conf,reason,yesp,l,h,b,iscrypto));bucket_counts[b]+=1;crypto_qualifying+=int(iscrypto)
  candidates.sort(key=lambda x:(x[0],x[1],x[2]),reverse=True);slots=max(0,min(MAX_NEW,MAX_OPEN-open_count));created=0
- for item in candidates:
+ for score,edge,v,m,pick,conf,reason,yesp,l,h,b,iscrypto in candidates:
   if created>=slots:break
-  score,edge,v,m,pick,conf,reason,yesp,l,h,b=item
   if b=='long' and long_open>=MAX_LONG_OPEN:continue
-  side=yesp if pick=='YES' else 100-yesp;e=parse_end(m)
-  preds.append({'id':str(m['id']),'slug':m.get('slug'),'question':m.get('question','Untitled market'),'pick':pick,'confidence':conf,'market_probability_at_pick':round(yesp,2),'market_probability_current':round(yesp,2),'edge_at_pick':round(conf-side,2),'selection_score':round(score,2),'hours_to_resolution_at_pick':round(h,1) if h is not None else None,'market_end_date':e.isoformat().replace('+00:00','Z') if e else None,'volume':v,'liquidity':l,'locked_at':now(),'updated_at':now(),'status':'open','result':None,'resolved_at':None,'market_url':market_url(m),'reason':reason,'model_version':MODEL_VERSION,'seeded_demo':False});created+=1
-  if b=='long':long_open+=1
-  print(f'[new] {b.upper()} {pick} {conf}% | score {score:.1f} | resolves in {h:.1f}h' if h is not None else f'[new] {b.upper()} {pick} {conf}% | score {score:.1f}')
- removed=0
+  if iscrypto and crypto_open>=MAX_CRYPTO_OPEN:continue
+  side=yesp if pick=='YES' else 100-yesp;e=parse_end(m);preds.append({'id':str(m['id']),'slug':m.get('slug'),'question':m.get('question','Untitled market'),'pick':pick,'confidence':conf,'market_probability_at_pick':round(yesp,2),'market_probability_current':round(yesp,2),'edge_at_pick':round(conf-side,2),'selection_score':round(score,2),'hours_to_resolution_at_pick':round(h,1) if h is not None else None,'market_end_date':e.isoformat().replace('+00:00','Z') if e else None,'volume':v,'liquidity':l,'locked_at':now(),'updated_at':now(),'status':'open','result':None,'resolved_at':None,'market_url':market_url(m),'reason':reason,'model_version':MODEL_VERSION,'category':'crypto' if iscrypto else 'general','seeded_demo':False});created+=1;long_open+=int(b=='long');crypto_open+=int(iscrypto);print(f"[new] {'CRYPTO ' if iscrypto else ''}{b.upper()} {pick} {conf}% | score {score:.1f} | resolves in {h:.1f}h" if h is not None else f'[new] {b.upper()} {pick} {conf}% | score {score:.1f}')
  while len(preds)>MAX_VISIBLE:
   i=min(range(len(preds)),key=lambda j:str(preds[j].get('locked_at') or ''));old=preds.pop(i)
   if not demo(old) and old.get('id') is not None:retired.add(str(old['id']))
-  removed+=1
- state['retired_market_ids']=sorted(retired);real=[p for p in preds if not demo(p)];wins=sum(status(p)=='won' for p in real);losses=sum(status(p)=='lost' for p in real);ropen=sum(status(p)=='open' for p in real);state['updated_at']=now();state['model_version']=MODEL_VERSION;state['stats']={'real_wins':wins,'real_losses':losses,'real_resolved':wins+losses,'real_open':ropen,'real_accuracy':round(wins/(wins+losses)*100,1) if wins+losses else None,'seeded_demo_count':sum(demo(p) for p in preds),'visible_predictions':len(preds)};DATA.write_text(json.dumps(state,indent=2)+'\n')
- print(f'[scan] qualifying by bucket={bucket_counts}; long_open={long_open}/{MAX_LONG_OPEN}')
- print(f'[run] candidates={len(candidates)}, created={created}, resolved={resolved}, retired={removed}, visible={len(preds)}')
+ state['retired_market_ids']=sorted(retired);real=[p for p in preds if not demo(p)];wins=sum(status(p)=='won' for p in real);losses=sum(status(p)=='lost' for p in real);ropen=sum(status(p)=='open' for p in real);state['updated_at']=now();state['model_version']=MODEL_VERSION;state['stats']={'real_wins':wins,'real_losses':losses,'real_resolved':wins+losses,'real_open':ropen,'real_accuracy':round(wins/(wins+losses)*100,1) if wins+losses else None,'seeded_demo_count':sum(demo(p) for p in preds),'visible_predictions':len(preds),'crypto_open':sum(crypto_pred(p) for p in real if status(p)=='open')};DATA.write_text(json.dumps(state,indent=2)+'\n');print(f'[scan] qualifying={bucket_counts}; crypto_qualifying={crypto_qualifying}; crypto_open={crypto_open}/{MAX_CRYPTO_OPEN}; long_open={long_open}/{MAX_LONG_OPEN}');print(f'[run] candidates={len(candidates)}, created={created}, resolved={resolved}, visible={len(preds)}')
 if __name__=='__main__':main()
