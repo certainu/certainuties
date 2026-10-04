@@ -21,6 +21,7 @@ jobs:
           CERTAINU_MAX_OPEN: '1000'
           CERTAINU_MAX_NEW_PER_RUN: '1'
           CERTAINU_MAX_VISIBLE: '50'
+          CERTAINU_MAX_LONG_OPEN: '6'
           CERTAINU_MIN_EDGE: '0'
           CERTAINU_MIN_VOLUME: '5000'
         run: python scripts/update_predictions.py
