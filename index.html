@@ -1798,6 +1798,17 @@ footer .socials{
 .prediction-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.prediction-meta span{font-size:9px;padding:6px 8px;border:1px solid rgba(255,255,255,.14);border-radius:999px;color:rgba(255,255,255,.62)}
 .status.lost{color:#ff9ca4}.status.void{color:#c6d2f7}
 </style>
+
+<style>
+/* CERTAINUTIES resolution-time filters — card design intentionally unchanged */
+.prediction-time-filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.prediction-time-filter{border:1px solid rgba(255,255,255,.18);background:rgba(7,24,79,.24);color:rgba(255,255,255,.78);border-radius:999px;padding:10px 13px;font-size:9px;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:.18s ease}
+.prediction-time-filter:hover{background:rgba(255,255,255,.12);color:#fff;transform:translateY(-1px)}
+.prediction-time-filter.active{background:#fff;color:#1747df;border-color:#fff;box-shadow:0 8px 20px rgba(4,18,76,.16)}
+.prediction-time-filter span{opacity:.7;margin-left:4px}
+@media(max-width:600px){.prediction-time-filters{gap:6px}.prediction-time-filter{padding:9px 10px;font-size:8px}}
+</style>
+
 </head>
 <body>
 <nav><div class="wrap navin">
@@ -1974,6 +1985,16 @@ footer .socials{
       <span><b>51–59%</b> PROBABLY</span><span><b>60–69%</b> PRETTY CERTAIN</span><span><b>70–84%</b> CERTAIN</span><span><b>85–99%</b> 100% CERTAIN PROBABLY</span>
     </div>
 
+
+    <div class="prediction-time-filters reveal" id="predictionTimeFilters" aria-label="Filter predictions by resolution time">
+      <button type="button" class="prediction-time-filter active" data-filter="all">ALL <span id="count-all">0</span></button>
+      <button type="button" class="prediction-time-filter" data-filter="quick">⚡ QUICK ≤24H <span id="count-quick">0</span></button>
+      <button type="button" class="prediction-time-filter" data-filter="short">🔥 SHORT 1–3D <span id="count-short">0</span></button>
+      <button type="button" class="prediction-time-filter" data-filter="week">🎯 THIS WEEK <span id="count-week">0</span></button>
+      <button type="button" class="prediction-time-filter" data-filter="long">🔮 LONG TERM <span id="count-long">0</span></button>
+      <button type="button" class="prediction-time-filter" data-filter="resolved">✅ RESOLVED <span id="count-resolved">0</span></button>
+    </div>
+
     <div class="prediction-list" id="predictionList">
       <article class="prediction-card reveal"><h3>Loading CERTAINU's latest calls…</h3></article>
     </div>
@@ -2026,7 +2047,8 @@ function normalizePrediction(p){
   const current=Number(p.market_probability_current ?? p.current_market_probability ?? atPick);
   return {...p, seeded_demo:demo, status, confidence,
     market_probability_at_pick:atPick, market_probability_current:current,
-    locked_at:p.locked_at||p.created_at||'', resolved_at:p.resolved_at||''};
+    locked_at:p.locked_at||p.created_at||'', resolved_at:p.resolved_at||'',
+    market_end_date:p.market_end_date||p.end_date||p.endDate||p.resolution_date||''};
 }
 
 function renderPrediction(raw){
@@ -2189,11 +2211,42 @@ async function loadPredictions(){
   );
   const predictionList=document.getElementById('predictionList');
   const expandBtn=document.getElementById('predictionExpandBtn');
+  function resolutionBucket(raw){
+    const p=normalizePrediction(raw);
+    if(['won','lost','void','resolved'].includes(p.status) || p.resolved_at) return 'resolved';
+    const end=Date.parse(p.market_end_date||'');
+    if(!end) return 'long';
+    const hours=(end-Date.now())/3600000;
+    if(hours<=24) return 'quick';
+    if(hours<=72) return 'short';
+    if(hours<=168) return 'week';
+    return 'long';
+  }
+  const bucketCounts={all:predictions.length,quick:0,short:0,week:0,long:0,resolved:0};
+  predictions.forEach(p=>bucketCounts[resolutionBucket(p)]++);
   predictionList.innerHTML=
-    predictions.map(renderPrediction).join('') ||
+    predictions.map(p=>renderPrediction(p).replace('<article class="prediction-card','<article data-resolution-bucket="'+resolutionBucket(p)+'" class="prediction-card')).join('') ||
     '<article class="prediction-card"><h3>No official calls yet.</h3></article>';
 
-  // Show the three most recent calls by default. The arrow reveals/collapses the archive.
+  Object.entries(bucketCounts).forEach(([key,value])=>{
+    const el=document.getElementById('count-'+key); if(el) el.textContent=value;
+  });
+  const filterBar=document.getElementById('predictionTimeFilters');
+  if(filterBar){
+    filterBar.onclick=(event)=>{
+      const btn=event.target.closest('.prediction-time-filter'); if(!btn)return;
+      const filter=btn.dataset.filter;
+      filterBar.querySelectorAll('.prediction-time-filter').forEach(b=>b.classList.toggle('active',b===btn));
+      predictionList.querySelectorAll('.prediction-card').forEach(card=>{
+        card.style.display=(filter==='all'||card.dataset.resolutionBucket===filter)?'':'none';
+      });
+      predictionList.classList.remove('prediction-list-collapsed');
+      if(expandBtn) expandBtn.hidden=true;
+      const label=document.getElementById('predictionExpandLabel'); if(label) label.hidden=true;
+    };
+  }
+
+  // Keep the existing three-card expander on the default ALL view.
   predictionList.classList.toggle('prediction-list-collapsed',predictions.length>3);
   if(expandBtn){
     const expandWrap=expandBtn.closest('.prediction-expand-wrap');
