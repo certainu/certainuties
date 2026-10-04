@@ -244,6 +244,48 @@ footer .socials{
   align-items:center;
 }
 
+
+/* Responsive hero-copy positioning:
+   keep the headline as far left as practical so it covers less of CERTAINU artwork. */
+.hero-copy-wrap{
+  left:clamp(10px, calc((100vw - 1680px) / 2), 72px) !important;
+  right:auto !important;
+  width:clamp(300px, 27vw, 410px) !important;
+  max-width:410px !important;
+}
+@media (min-width:1500px){
+  .hero-copy-wrap{
+    left:clamp(18px, calc((100vw - 1780px) / 2), 54px) !important;
+    width:min(25vw,400px) !important;
+  }
+}
+@media (min-width:1100px) and (max-width:1499px){
+  .hero-copy-wrap{
+    left:clamp(10px, 1.25vw, 18px) !important;
+    width:min(29vw,390px) !important;
+  }
+}
+@media (min-width:901px) and (max-width:1099px){
+  .hero-copy-wrap{
+    left:10px !important;
+    width:min(34vw,360px) !important;
+  }
+}
+@media (max-width:900px){
+  .hero-copy-wrap{
+    left:clamp(14px,3vw,24px) !important;
+    right:auto !important;
+    width:min(58vw,500px) !important;
+  }
+}
+@media (max-width:600px){
+  .hero-copy-wrap{
+    left:14px !important;
+    width:calc(100% - 28px) !important;
+    max-width:520px !important;
+  }
+}
+
 </style>
 
 <style>
