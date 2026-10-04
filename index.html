@@ -785,6 +785,78 @@ footer .socials{
   }
 }
 
+
+.tokenomics-wallet{
+  margin-top:22px;
+  padding:16px 18px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:14px;
+  background:rgba(255,255,255,.06);
+}
+.tokenomics-wallet span{
+  display:block;
+  margin-bottom:8px;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.12em;
+  opacity:.7;
+}
+.tokenomics-wallet code{
+  display:block;
+  font-family:monospace;
+  font-size:13px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+  color:inherit;
+}
+
+
+/* Center each CERTAINUTIES mascot in the side gutter:
+   halfway between the prediction-content edge and the viewport edge. */
+@media (min-width:901px){
+  #markets{
+    --certainuties-content-width: min(calc(100vw - 650px), 920px);
+    --certainuties-art-width: clamp(150px, 18vw, 300px);
+  }
+
+  #markets .certainuties-side-art,
+  #markets .certainuties-side-art.certainuties-following,
+  #markets .certainuties-side-art.certainuties-at-bottom{
+    width:var(--certainuties-art-width) !important;
+  }
+
+  #markets .certainuties-yes,
+  #markets .certainuties-yes.certainuties-following,
+  #markets .certainuties-yes.certainuties-at-bottom{
+    left:calc(
+      (100vw - var(--certainuties-content-width)) / 4
+      - var(--certainuties-art-width) / 2
+    ) !important;
+    right:auto !important;
+  }
+
+  #markets .certainuties-no,
+  #markets .certainuties-no.certainuties-following,
+  #markets .certainuties-no.certainuties-at-bottom{
+    right:calc(
+      (100vw - var(--certainuties-content-width)) / 4
+      - var(--certainuties-art-width) / 2
+    ) !important;
+    left:auto !important;
+  }
+
+  #markets > .wrap{
+    width:var(--certainuties-content-width) !important;
+  }
+}
+
+@media (min-width:901px) and (max-width:1250px){
+  #markets{
+    --certainuties-content-width:min(calc(100vw - 330px),860px);
+    --certainuties-art-width:clamp(145px,17vw,205px);
+  }
+}
+
 </style>
 
 <style>
@@ -1126,6 +1198,10 @@ footer .socials{
         <h3>Where creator fees go</h3>
         <p>Every creator fee supports two things: 54% buys back and burns CERTAINU, and 36% goes to the public Project Fund wallet for development and community initiatives. The remaining 10% buys back and burns $SPLICE as part of the SplicePad launch setup.</p>
         <p>We’ll publish the Project Fund wallet and share updates when it is used. These are allocations of creator fees, not a tax added to every token transfer. Buybacks and burns do not guarantee a token price.</p>
+        <div class="tokenomics-wallet">
+          <span>DEV WALLET</span>
+          <code>GeEP3EVX66Zxtty8Qk6gxai1hoDUugcVhyhw8gAZSPr6</code>
+        </div>
       </article>
 
       <article class="tokenomics-copy-card">
