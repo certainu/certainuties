@@ -923,6 +923,32 @@ footer .socials{
   }
 }
 
+
+/* Smooth CERTAINUTIES mascot motion */
+@media (min-width:901px){
+  #markets .certainuties-side-art{
+    will-change:transform !important;
+    backface-visibility:hidden;
+    transform:translate3d(0,0,0);
+  }
+}
+
+
+.tokenomics-wallet-entry + .tokenomics-wallet-entry{
+  margin-top:16px;
+  padding-top:16px;
+  border-top:1px solid rgba(255,255,255,.14);
+}
+.tokenomics-wallet-entry span{
+  display:block;
+  margin-bottom:8px;
+  font-size:11px;
+  font-weight:900;
+  line-height:1.35;
+  letter-spacing:.10em;
+  opacity:.72;
+}
+
 </style>
 
 <style>
@@ -1265,8 +1291,14 @@ footer .socials{
         <p>Every creator fee supports two things: 54% buys back and burns CERTAINU, and 36% goes to the public Project Fund wallet for development and community initiatives. The remaining 10% buys back and burns $SPLICE as part of the SplicePad launch setup.</p>
         <p>We’ll publish the Project Fund wallet and share updates when it is used. These are allocations of creator fees, not a tax added to every token transfer. Buybacks and burns do not guarantee a token price.</p>
         <div class="tokenomics-wallet">
-          <span>DEV WALLET</span>
-          <code>GeEP3EVX66Zxtty8Qk6gxai1hoDUugcVhyhw8gAZSPr6</code>
+          <div class="tokenomics-wallet-entry">
+            <span>OPERATIONS / PUBLIC FUND / DEV / COMMUNITY INITIATIVES WALLET</span>
+            <code>8fQEbxcsrnhEhZBKGfsot8W8CouqA8vwzxHxqfPmuJth</code>
+          </div>
+          <div class="tokenomics-wallet-entry">
+            <span>DEV WALLET</span>
+            <code>GeEP3EVX66Zxtty8Qk6gxai1hoDUugcVhyhw8gAZSPr6</code>
+          </div>
         </div>
       </article>
 
@@ -1637,6 +1669,93 @@ loadPredictions();</script>
   observer.observe(section, {childList:true, subtree:true, attributes:true});
 
   requestMascotUpdate();
+})();
+</script>
+
+
+<script>
+(function(){
+  const section=document.getElementById('markets');
+  if(!section) return;
+
+  const arts=Array.from(section.querySelectorAll('.certainuties-side-art'));
+  if(!arts.length) return;
+
+  let target=0;
+  let current=0;
+  let running=false;
+
+  function calculateTarget(){
+    if(window.innerWidth<=900){
+      target=0;
+      return;
+    }
+
+    const rect=section.getBoundingClientRect();
+    const sectionTop=window.scrollY+rect.top;
+    const sample=arts[0];
+    const baseTop=parseFloat(getComputedStyle(sample).top)||28;
+    const artHeight=sample.offsetHeight;
+
+    /* Position the mascots around the upper-middle of the visible screen. */
+    const desiredTop=window.scrollY+(window.innerHeight*0.24);
+    let next=desiredTop-(sectionTop+baseTop);
+
+    next=Math.max(0,next);
+
+    /* Hard clamp keeps the artwork completely inside the dark-blue area. */
+    const bottomPadding=32;
+    const maxShift=Math.max(
+      0,
+      section.offsetHeight-baseTop-artHeight-bottomPadding
+    );
+
+    target=Math.min(next,maxShift);
+  }
+
+  function animate(){
+    /* Ease toward the target instead of jumping to every scroll position. */
+    current += (target-current)*0.115;
+
+    if(Math.abs(target-current)<0.08){
+      current=target;
+    }
+
+    const y=Math.round(current*100)/100;
+    arts.forEach(el=>{
+      el.style.setProperty(
+        'transform',
+        'translate3d(0,'+y+'px,0)',
+        'important'
+      );
+    });
+
+    if(Math.abs(target-current)>0.08){
+      requestAnimationFrame(animate);
+    }else{
+      running=false;
+    }
+  }
+
+  function update(){
+    calculateTarget();
+    if(!running){
+      running=true;
+      requestAnimationFrame(animate);
+    }
+  }
+
+  window.addEventListener('scroll',update,{passive:true});
+  window.addEventListener('resize',update,{passive:true});
+  window.addEventListener('load',update);
+  document.addEventListener('DOMContentLoaded',update);
+
+  /* Recalculate when SHOW MORE / SHOW LESS changes section height. */
+  new ResizeObserver(update).observe(section);
+
+  calculateTarget();
+  current=target;
+  update();
 })();
 </script>
 
