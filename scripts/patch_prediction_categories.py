@@ -33,11 +33,44 @@ css='''
 .prediction-time-filter:hover{background:rgba(255,255,255,.12);color:#fff;transform:translateY(-1px)}
 .prediction-time-filter.active{background:#fff;color:#1747df;border-color:#fff;box-shadow:0 8px 20px rgba(4,18,76,.16)}
 .prediction-time-filter span{opacity:.7;margin-left:4px}
-@media(max-width:600px){.prediction-time-filters{gap:6px}.prediction-time-filter{padding:9px 10px;font-size:8px}}
+
+/* Make the four CERTAINU confidence-scale pills much easier to notice. */
+.certainu-confidence-pill,
+.confidence-pill,
+.confidence-scale span,
+.confidence-legend span,
+.certainty-scale span,
+.certainty-legend span{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:11px 18px!important;
+  border:2px solid rgba(255,255,255,.42)!important;
+  border-radius:999px!important;
+  background:rgba(13,54,178,.52)!important;
+  color:#fff!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  line-height:1.1!important;
+  letter-spacing:.035em!important;
+  box-shadow:0 5px 14px rgba(5,24,100,.18), inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+.confidence-scale,.confidence-legend,.certainty-scale,.certainty-legend{gap:12px!important;align-items:center!important;flex-wrap:wrap!important}
+
+@media(max-width:600px){
+  .prediction-time-filters{gap:6px}.prediction-time-filter{padding:9px 10px;font-size:8px}
+  .certainu-confidence-pill,.confidence-pill,.confidence-scale span,.confidence-legend span,.certainty-scale span,.certainty-legend span{min-height:38px;padding:9px 13px!important;font-size:10px!important}
+  .confidence-scale,.confidence-legend,.certainty-scale,.certainty-legend{gap:8px!important}
+}
 </style>
 '''
 if 'CERTAINUTIES resolution-time filters' not in s:
     s=s.replace('</head>',css+'\n</head>',1)
+elif 'Make the four CERTAINU confidence-scale pills' not in s:
+    # Existing patch style is already present; inject the confidence enhancement separately.
+    confidence_css='''\n<style>\n/* Make the four CERTAINU confidence-scale pills much easier to notice. */\n.certainu-confidence-pill,.confidence-pill,.confidence-scale span,.confidence-legend span,.certainty-scale span,.certainty-legend span{display:inline-flex!important;align-items:center;justify-content:center;min-height:42px;padding:11px 18px!important;border:2px solid rgba(255,255,255,.42)!important;border-radius:999px!important;background:rgba(13,54,178,.52)!important;color:#fff!important;font-size:12px!important;font-weight:900!important;line-height:1.1!important;letter-spacing:.035em!important;box-shadow:0 5px 14px rgba(5,24,100,.18),inset 0 1px 0 rgba(255,255,255,.08)!important}.confidence-scale,.confidence-legend,.certainty-scale,.certainty-legend{gap:12px!important;align-items:center!important;flex-wrap:wrap!important}@media(max-width:600px){.certainu-confidence-pill,.confidence-pill,.confidence-scale span,.confidence-legend span,.certainty-scale span,.certainty-legend span{min-height:38px;padding:9px 13px!important;font-size:10px!important}.confidence-scale,.confidence-legend,.certainty-scale,.certainty-legend{gap:8px!important}}\n</style>\n'''
+    s=s.replace('</head>',confidence_css+'\n</head>',1)
 
 old="    locked_at:p.locked_at||p.created_at||'', resolved_at:p.resolved_at||''};"
 new="    locked_at:p.locked_at||p.created_at||'', resolved_at:p.resolved_at||'',\n    market_end_date:p.market_end_date||p.end_date||p.endDate||p.resolution_date||''};"
@@ -96,4 +129,4 @@ else:
     s=s.replace("const bucketCounts={all:predictions.length,quick:0,short:0,week:0,long:0};","const bucketCounts={all:predictions.length,quick:0,short:0,week:0,long:0,resolved:0};")
 
 P.write_text(s,encoding="utf-8")
-print('CERTAINUTIES categories + collapse arrow + hourly refresh banner patched')
+print('CERTAINUTIES categories + collapse arrow + hourly refresh banner + larger confidence bubbles patched')
