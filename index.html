@@ -1818,6 +1818,12 @@ footer .socials{
 <style id="certainu-filter-enhancements">
 .prediction-time-filters,.prediction-topic-filters{display:flex!important;gap:11px;flex-wrap:wrap;align-items:center;visibility:visible!important;opacity:1!important}.prediction-time-filters{margin:0 0 14px}.prediction-topic-filters{margin:0 0 26px;padding-top:3px}.prediction-time-filter,.prediction-topic-filter{border:1.5px solid rgba(255,255,255,.26);background:rgba(7,24,79,.25);color:rgba(255,255,255,.88);border-radius:999px;padding:14px 18px;font-size:13px;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:.18s ease;min-height:46px}.prediction-topic-filter{padding:11px 17px;font-size:11px;min-height:42px;background:rgba(7,24,79,.16)}.prediction-time-filter:hover,.prediction-topic-filter:hover{background:rgba(255,255,255,.12);color:#fff;transform:translateY(-1px)}.prediction-time-filter.active,.prediction-topic-filter.active{background:#fff;color:#1747df;border-color:#fff;box-shadow:0 9px 24px rgba(4,18,76,.2)}.prediction-filter-label{font-size:11px;font-weight:900;letter-spacing:.16em;color:rgba(255,255,255,.68);margin-right:3px}.certainu-confidence-pill,.confidence-pill,.confidence-scale span,.confidence-legend span,.certainty-scale span,.certainty-legend span{display:inline-flex!important;align-items:center;justify-content:center;min-height:42px;padding:11px 18px!important;border:2px solid rgba(255,255,255,.42)!important;border-radius:999px!important;background:rgba(13,54,178,.52)!important;color:#fff!important;font-size:12px!important;font-weight:900!important;line-height:1.1!important;letter-spacing:.035em!important;box-shadow:0 5px 14px rgba(5,24,100,.18),inset 0 1px 0 rgba(255,255,255,.08)!important}.confidence-scale,.confidence-legend,.certainty-scale,.certainty-legend{gap:12px!important;align-items:center!important;flex-wrap:wrap!important}@media(max-width:600px){.prediction-time-filters,.prediction-topic-filters{gap:8px}.prediction-time-filter{padding:11px 14px;font-size:10px;min-height:40px}.prediction-topic-filter{padding:9px 12px;font-size:9px;min-height:36px}.prediction-filter-label{font-size:9px}.certainu-confidence-pill,.confidence-pill,.confidence-scale span,.confidence-legend span,.certainty-scale span,.certainty-legend span{min-height:38px;padding:9px 13px!important;font-size:10px!important}}
 </style>
+<style id="certainu-prediction-expand-fix">
+#certainuPredictionExpandWrap{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:18px auto 8px;position:relative;z-index:5}
+#certainuPredictionExpandWrap[hidden]{display:none!important}
+#certainuPredictionExpandWrap .prediction-expand-label{position:static!important;margin:0!important;transform:none!important}
+#certainuPredictionExpandWrap button{position:static!important;margin:0!important;transform:none!important}
+</style>
 </head>
 <body>
 <nav><div class="wrap navin">
@@ -1998,6 +2004,8 @@ footer .socials{
     
 
     
+
+
 
 
 
@@ -2700,4 +2708,57 @@ loadPredictions();</script>
 })();
 </script>
 
+<script id="certainu-prediction-expand-fix-js">
+(function(){
+  function initCertainuPredictionExpand(){
+    const list=document.getElementById('predictionList');
+    if(!list)return;
+
+    let label=document.getElementById('predictionExpandLabel');
+    let btn=document.querySelector('[aria-controls="predictionList"]') || document.getElementById('predictionExpandBtn') || document.querySelector('.prediction-expand-btn');
+    if(!btn && label){
+      const candidates=[label.previousElementSibling,label.nextElementSibling,label.parentElement&&label.parentElement.querySelector('button')];
+      btn=candidates.find(x=>x&&x.tagName==='BUTTON')||null;
+    }
+
+    let wrap=document.getElementById('certainuPredictionExpandWrap');
+    if(!wrap){wrap=document.createElement('div');wrap.id='certainuPredictionExpandWrap';list.insertAdjacentElement('afterend',wrap);}
+    else if(wrap.previousElementSibling!==list){list.insertAdjacentElement('afterend',wrap);}
+
+    if(label){label.classList.add('prediction-expand-label');wrap.appendChild(label);}
+    if(btn)wrap.appendChild(btn);
+
+    let expanded=false;
+    function matches(card){
+      const time=document.querySelector('#predictionTimeFilters .prediction-time-filter.active')?.dataset.filter||'all';
+      const topic=document.querySelector('#predictionTopicFilters .prediction-topic-filter.active')?.dataset.topic||'all';
+      return (time==='all'||card.dataset.resolutionBucket===time)&&(topic==='all'||card.dataset.topicBucket===topic);
+    }
+    function refresh(){
+      const cards=[...list.querySelectorAll('.prediction-card')];
+      const matched=cards.filter(matches);
+      cards.forEach(c=>c.style.display='none');
+      matched.forEach((c,i)=>{c.style.display=(expanded||i<3)?'':'none';});
+      list.classList.remove('prediction-list-collapsed');
+      const needs=matched.length>3;
+      wrap.hidden=!needs;
+      if(label){label.hidden=!needs;label.textContent=expanded?'SHOW LESS':'SHOW MORE';}
+      if(btn){btn.hidden=!needs;btn.setAttribute('aria-expanded',expanded?'true':'false');}
+    }
+
+    if(btn){
+      btn.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();expanded=!expanded;refresh();},{capture:true});
+    }
+    if(label){
+      label.style.cursor='pointer';
+      label.addEventListener('click',function(e){e.preventDefault();expanded=!expanded;refresh();});
+    }
+    document.getElementById('predictionTimeFilters')?.addEventListener('click',()=>{expanded=false;setTimeout(refresh,0);});
+    document.getElementById('predictionTopicFilters')?.addEventListener('click',()=>{expanded=false;setTimeout(refresh,0);});
+    new MutationObserver(()=>setTimeout(refresh,0)).observe(list,{childList:true});
+    refresh();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initCertainuPredictionExpand);else initCertainuPredictionExpand();
+})();
+</script>
 </body></html>
