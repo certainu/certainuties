@@ -40,7 +40,11 @@ js='''<script id="certainu-prediction-expand-fix-js">
     function matches(card){
       const time=document.querySelector('#predictionTimeFilters .prediction-time-filter.active')?.dataset.filter||'all';
       const topic=document.querySelector('#predictionTopicFilters .prediction-topic-filter.active')?.dataset.topic||'all';
-      return (time==='all'||card.dataset.resolutionBucket===time)&&(topic==='all'||card.dataset.topicBucket===topic);
+      const bucket=card.dataset.resolutionBucket||'';
+      // ALL means all CURRENT predictions. Resolved calls only appear under RESOLVED.
+      const timeMatch=time==='all' ? bucket!=='resolved' : bucket===time;
+      const topicMatch=topic==='all'||card.dataset.topicBucket===topic;
+      return timeMatch&&topicMatch;
     }
     function refresh(){
       const cards=[...list.querySelectorAll('.prediction-card')];
@@ -75,4 +79,4 @@ else:raise SystemExit('ERROR: </head> not found')
 if '</body>' in s:s=s.replace('</body>',js+'\n</body>',1)
 else:raise SystemExit('ERROR: </body> not found')
 P.write_text(s,encoding='utf-8')
-print('Prediction list fixed: max 3 cards collapsed; Show More anchored directly below list.')
+print('Prediction list fixed: max 3 cards collapsed; Show More below list; ALL excludes resolved.')
