@@ -4,6 +4,10 @@ from pathlib import Path
 P=Path(__file__).resolve().parents[1]/"index.html"
 s=P.read_text(encoding="utf-8")
 
+# Keep the public status banner synchronized with the hourly GitHub updater.
+s=s.replace('AUTO-REFRESH ≈ EVERY 2 HOURS','AUTO-REFRESH ≈ EVERY HOUR')
+s=s.replace('AUTO-REFRESH ≈ EVERY 30 MINUTES','AUTO-REFRESH ≈ EVERY HOUR')
+
 controls='''
     <div class="prediction-time-filters reveal" id="predictionTimeFilters" aria-label="Filter predictions by resolution time">
       <button type="button" class="prediction-time-filter active" data-filter="all">ALL <span id="count-all">0</span></button>
@@ -75,34 +79,21 @@ newblock="""  function resolutionBucket(raw){
       predictionList.querySelectorAll('.prediction-card').forEach(card=>{
         card.style.display=(filter==='all'||card.dataset.resolutionBucket===filter)?'':'none';
       });
-      // Preserve the archive arrow for every category instead of hiding it.
       const visibleCards=[...predictionList.querySelectorAll('.prediction-card')].filter(card=>card.style.display!=='none');
       const shouldCollapse=visibleCards.length>3;
       predictionList.classList.toggle('prediction-list-collapsed',shouldCollapse);
-      if(expandBtn){
-        expandBtn.hidden=!shouldCollapse;
-        expandBtn.setAttribute('aria-expanded',shouldCollapse?'false':'true');
-      }
+      if(expandBtn){expandBtn.hidden=!shouldCollapse;expandBtn.setAttribute('aria-expanded',shouldCollapse?'false':'true');}
       const label=document.getElementById('predictionExpandLabel');
-      if(label){ label.hidden=!shouldCollapse; label.textContent='SHOW MORE'; }
+      if(label){label.hidden=!shouldCollapse;label.textContent='SHOW MORE';}
     };
   }
 
-  // Keep the existing three-card expander on the default ALL view.
   predictionList.classList.toggle('prediction-list-collapsed',predictions.length>3);
   if(expandBtn){"""
 if oldblock in s:s=s.replace(oldblock,newblock,1)
 else:
     s=s.replace("if(['won','lost','void'].includes(p.status)) return 'long';","if(['won','lost','void','resolved'].includes(p.status) || p.resolved_at) return 'resolved';")
     s=s.replace("const bucketCounts={all:predictions.length,quick:0,short:0,week:0,long:0};","const bucketCounts={all:predictions.length,quick:0,short:0,week:0,long:0,resolved:0};")
-    # Repair the prior category patch that hid the expander after a filter click.
-    s=s.replace("predictionList.classList.remove('prediction-list-collapsed');\n      if(expandBtn) expandBtn.hidden=true;\n      const label=document.getElementById('predictionExpandLabel'); if(label) label.hidden=true;",
-'''const visibleCards=[...predictionList.querySelectorAll('.prediction-card')].filter(card=>card.style.display!=='none');
-      const shouldCollapse=visibleCards.length>3;
-      predictionList.classList.toggle('prediction-list-collapsed',shouldCollapse);
-      if(expandBtn){ expandBtn.hidden=!shouldCollapse; expandBtn.setAttribute('aria-expanded',shouldCollapse?'false':'true'); }
-      const label=document.getElementById('predictionExpandLabel');
-      if(label){ label.hidden=!shouldCollapse; label.textContent='SHOW MORE'; }''')
 
 P.write_text(s,encoding="utf-8")
-print('CERTAINUTIES category UI + collapse arrow patched')
+print('CERTAINUTIES categories + collapse arrow + hourly refresh banner patched')
