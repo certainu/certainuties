@@ -1,0 +1,32 @@
+name: Fill CERTAINU Predictions Once
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Add up to 30 balanced CERTAINU predictions
+        env:
+          CERTAINU_BATCH_ADD: '30'
+          CERTAINU_MAX_VISIBLE: '50'
+          CERTAINU_MIN_EDGE: '0'
+          CERTAINU_MIN_VOLUME: '5000'
+        run: python scripts/fill_predictions_once.py
+      - name: Apply CERTAINUTIES resolution categories
+        run: python scripts/patch_prediction_categories.py
+      - name: Commit batch predictions
+        run: |
+          git config user.name "CERTAINU Bot"
+          git config user.email "actions@github.com"
+          git add data/predictions.json index.html
+          git diff --cached --quiet || git commit -m "One-time CERTAINU prediction fill"
+          git push
