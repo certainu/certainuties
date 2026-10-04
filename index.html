@@ -1206,6 +1206,301 @@ footer .socials{
   color:#fff !important;
 }
 
+
+/* OPTION 2 — POLYMARKET vs CERTAINU */
+#markets .option2-card{
+  padding:0 !important;
+  overflow:hidden;
+  background:rgba(15,49,151,.94) !important;
+  border:1px solid rgba(255,255,255,.19) !important;
+  border-radius:18px !important;
+  box-shadow:0 12px 34px rgba(4,20,80,.14) !important;
+}
+#markets .option2-card .o2-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:24px;
+  padding:20px 22px 16px;
+}
+#markets .option2-card .o2-head-copy{min-width:0}
+#markets .option2-card .o2-status{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;
+}
+#markets .option2-card .o2-live{
+  font-size:10px;font-weight:950;letter-spacing:.09em;color:#ffe45c;
+}
+#markets .option2-card h3{
+  margin:0 !important;
+  font-size:clamp(18px,1.45vw,23px) !important;
+  line-height:1.16 !important;
+  letter-spacing:-.025em;
+}
+#markets .option2-card .o2-date{
+  flex:0 0 auto;
+  font-size:10px;font-weight:900;opacity:.58;text-align:right;
+}
+#markets .o2-versus{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr);
+  align-items:stretch;
+  margin:0 22px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:14px;
+  overflow:hidden;
+  background:rgba(5,24,91,.28);
+}
+#markets .option2-card.resolved .o2-versus{
+  grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr) 150px;
+}
+#markets .o2-side{
+  min-height:112px;
+  padding:18px 20px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+#markets .o2-market{
+  background:rgba(255,255,255,.055) !important;
+}
+#markets .o2-certainu{
+  position:relative;
+  background:rgba(255,255,255,.07) !important;
+}
+#markets .o2-certainu.yes{
+  background:linear-gradient(135deg,rgba(22,163,74,.96),rgba(21,128,61,.98)) !important;
+}
+#markets .o2-certainu.no{
+  background:linear-gradient(135deg,rgba(220,38,38,.96),rgba(185,28,28,.98)) !important;
+}
+#markets .o2-label,
+#markets .o2-result span{
+  display:block;
+  margin-bottom:7px;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.11em;
+  opacity:.70;
+}
+#markets .o2-side strong{
+  display:block;
+  font-size:clamp(24px,2.1vw,34px) !important;
+  line-height:1;
+  font-weight:950 !important;
+  color:#fff !important;
+}
+#markets .o2-side small{
+  margin-top:9px;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.04em;
+  opacity:.68;
+}
+#markets .o2-vs{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.08em;
+  color:rgba(255,255,255,.48);
+  background:rgba(3,19,75,.46);
+}
+#markets .o2-result{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:18px;
+  border-left:1px solid rgba(255,255,255,.12);
+}
+#markets .o2-result strong{font-size:23px;font-weight:950}
+#markets .o2-result.win strong{color:#7ff5a5}
+#markets .o2-result.loss strong{color:#ff9a9a}
+#markets .o2-result.void strong{color:#fff}
+#markets .o2-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  padding:15px 22px 18px;
+}
+#markets .o2-meta{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+#markets .o2-meta span{
+  padding:6px 9px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:999px;
+  font-size:9px;
+  font-weight:850;
+  opacity:.72;
+}
+#markets .o2-market-link{
+  flex:0 0 auto;
+  padding:11px 15px;
+  border-radius:11px;
+  background:#fff;
+  color:#1747df !important;
+  text-decoration:none;
+  font-size:10px;
+  font-weight:950;
+}
+#markets .o2-reason{
+  margin:0 22px 18px !important;
+  padding-top:0 !important;
+  opacity:.70;
+}
+@media(max-width:760px){
+  #markets .option2-card .o2-head{display:block}
+  #markets .option2-card .o2-date{margin-top:10px;text-align:left}
+  #markets .o2-versus,
+  #markets .option2-card.resolved .o2-versus{
+    grid-template-columns:1fr !important;
+  }
+  #markets .o2-vs{min-height:28px}
+  #markets .o2-result{border-left:0;border-top:1px solid rgba(255,255,255,.12)}
+  #markets .o2-footer{align-items:flex-start;flex-direction:column}
+}
+
+
+/* CERTAINUTIES — YES / NO market board */
+#markets .yn-card{
+  padding:0 !important;
+  overflow:hidden;
+  background:rgba(18,57,169,.96) !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  border-radius:18px !important;
+  box-shadow:0 12px 32px rgba(4,20,80,.15) !important;
+}
+#markets .yn-head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:22px;padding:20px 22px 16px;
+}
+#markets .yn-head h3{
+  margin:7px 0 0 !important;
+  font-size:clamp(18px,1.45vw,23px) !important;
+  line-height:1.15 !important;
+  letter-spacing:-.025em;
+}
+#markets .yn-status{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#markets .yn-live{font-size:10px;font-weight:950;letter-spacing:.09em;color:#ffe45c}
+#markets .yn-date{font-size:10px;font-weight:900;opacity:.58;white-space:nowrap}
+
+#markets .yn-market-line{
+  margin:0 22px 14px;
+  display:grid;
+  grid-template-columns:150px minmax(160px,1fr) 180px;
+  gap:16px;align-items:center;
+  padding:13px 15px;
+  border-radius:12px;
+  background:rgba(4,23,89,.38) !important;
+  border:1px solid rgba(255,255,255,.11);
+}
+#markets .yn-market-label span{
+  display:block;font-size:10px;font-weight:950;letter-spacing:.11em;
+}
+#markets .yn-market-label small{display:block;margin-top:4px;font-size:8px;opacity:.55;font-weight:800}
+#markets .yn-market-meter{
+  height:7px;position:relative;border-radius:999px;
+  background:rgba(220,38,38,.72);
+  overflow:visible;
+}
+#markets .yn-market-fill{
+  height:100%;border-radius:999px 0 0 999px;
+  background:rgba(34,197,94,.88);
+}
+#markets .yn-market-marker{
+  position:absolute;top:50%;width:3px;height:17px;
+  transform:translate(-50%,-50%);
+  background:#fff;border-radius:2px;
+  box-shadow:0 0 0 2px rgba(15,49,151,.8);
+}
+#markets .yn-market-values{
+  display:flex;justify-content:flex-end;gap:15px;font-size:10px;font-weight:850;
+}
+#markets .yn-market-values span:first-child{color:#9ff2b7}
+#markets .yn-market-values span:last-child{color:#ffb0b0}
+#markets .yn-market-values b{font-size:15px;color:inherit}
+
+#markets .yn-choice-title{
+  display:flex;align-items:baseline;justify-content:space-between;
+  gap:14px;margin:0 22px 8px;
+}
+#markets .yn-choice-title>span{font-size:10px;font-weight:950;letter-spacing:.11em}
+#markets .yn-choice-title small{font-size:9px;font-weight:850;opacity:.62}
+
+#markets .yn-choices{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;margin:0 22px;
+}
+#markets .yn-choice{
+  min-height:92px;
+  padding:15px 18px;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  grid-template-rows:auto auto;
+  column-gap:15px;align-items:center;
+  border-radius:13px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.055) !important;
+  opacity:.58;
+}
+#markets .yn-choice .yn-choice-word{
+  grid-row:1 / 3;
+  font-size:24px;font-weight:950;letter-spacing:-.02em;
+}
+#markets .yn-choice strong{
+  justify-self:end;
+  font-size:27px !important;font-weight:950 !important;color:#fff !important;
+}
+#markets .yn-choice em{
+  justify-self:end;font-style:normal;font-size:9px;font-weight:900;letter-spacing:.06em;
+}
+#markets .yn-choice.yes.selected{
+  opacity:1;
+  background:linear-gradient(135deg,rgba(22,163,74,.97),rgba(21,128,61,.99)) !important;
+  border-color:rgba(134,239,172,.72);
+  box-shadow:0 8px 24px rgba(22,163,74,.20);
+}
+#markets .yn-choice.no.selected{
+  opacity:1;
+  background:linear-gradient(135deg,rgba(220,38,38,.97),rgba(185,28,28,.99)) !important;
+  border-color:rgba(252,165,165,.72);
+  box-shadow:0 8px 24px rgba(220,38,38,.20);
+}
+#markets .yn-choice.selected *{color:#fff !important}
+
+#markets .yn-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:15px 22px 18px;
+}
+#markets .yn-meta{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+#markets .yn-meta span{
+  padding:6px 9px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.13);
+  font-size:9px;font-weight:850;opacity:.72;
+}
+#markets .yn-meta .yn-result.won{color:#8bf2a8;opacity:1}
+#markets .yn-meta .yn-result.lost{color:#ffabab;opacity:1}
+#markets .yn-market-link{
+  flex:0 0 auto;padding:11px 15px;border-radius:11px;
+  background:#fff;color:#1747df !important;
+  text-decoration:none;font-size:10px;font-weight:950;
+}
+#markets .yn-reason{margin:0 22px 18px !important;opacity:.68}
+
+@media(max-width:780px){
+  #markets .yn-head{display:block}
+  #markets .yn-date{display:block;margin-top:9px}
+  #markets .yn-market-line{grid-template-columns:1fr}
+  #markets .yn-market-values{justify-content:flex-start}
+  #markets .yn-choices{grid-template-columns:1fr}
+  #markets .yn-footer{flex-direction:column;align-items:flex-start}
+}
+
 </style>
 
 <style>
@@ -1704,18 +1999,69 @@ function renderPrediction(raw){
   const p=normalizePrediction(raw);
   const resolved=['won','lost','void'].includes(p.status);
   const status=p.status==='won'?'✓ CERTAINU WAS RIGHT':p.status==='lost'?'✕ CERTAINU WAS WRONG':p.status==='void'?'— VOID':'● OPEN';
-  const marketSide=p.pick==='YES' ? p.market_probability_at_pick : 100-p.market_probability_at_pick;
-  const liveSide=p.pick==='YES' ? p.market_probability_current : 100-p.market_probability_current;
-  const edge=p.confidence-marketSide;
-  const demoBadge=p.seeded_demo?'':'<span style="font-size:11px;font-weight:900;letter-spacing:.08em;margin-left:8px">LIVE AUTOMATED PICK</span>';
-  return `<article class="prediction-card ${resolved?'resolved':''} reveal show" data-status="${esc(p.status)}">
-    <div class="prediction-top"><span class="status ${esc(p.status)}">${status}${demoBadge}</span><span class="pick-date">${resolved?'RESOLVED PICK':'LOCKED '+fmtDate(p.locked_at)}</span></div>
-    <h3>${esc(p.question)}</h3>
-    <div class="prob-compare"><div><span>CERTAINU</span><strong>${p.confidence}% ${esc(p.pick)}</strong><i>${confidenceLabel(p.confidence)}</i></div><div><span>${resolved?'RESULT':'POLYMARKET NOW'}</span><strong>${resolved?esc(p.result):(Math.round(liveSide)+'% '+esc(p.pick))}</strong><i>${resolved?(p.status==='won'?'W +1':p.status==='lost'?'L':'VOID'):((edge>=0?'+':'')+edge.toFixed(1)+'% EDGE AT LOCK')}</i></div></div>
-    <div class="prediction-bar"><span style="width:${p.confidence}%"></span><em style="left:${Math.max(0,Math.min(100,marketSide))}%"></em></div>
-    <div class="prediction-bottom"><span>🐕 CERTAINU IS <b>${p.confidence}% CERTAIN → ${esc(p.pick)}</b></span><a href="${esc(p.market_url||'https://polymarket.com/')}" target="_blank" rel="noopener">VIEW THE MARKET ↗</a></div>
-    ${p.reason?`<p class="prediction-reason">${esc(p.reason)}</p>`:''}
-    <div class="prediction-meta"><span>AT LOCK: ${Math.round(marketSide)}% ${esc(p.pick)}</span><span>${p.category?'CATEGORY: '+esc(p.category):'VOLUME: $'+Number(p.volume||0).toLocaleString(undefined,{maximumFractionDigits:0})}</span><span>${p.seeded_demo?'CERTAINU ARCHIVE':'ID: '+esc(p.id).slice(0,12)}</span></div>
+  const yesNow=Math.max(0,Math.min(100,Number(p.market_probability_current ?? p.market_probability_at_pick ?? 0)));
+  const noNow=100-yesNow;
+  const yesLock=Math.max(0,Math.min(100,Number(p.market_probability_at_pick ?? yesNow)));
+  const noLock=100-yesLock;
+  const chosenMarketAtLock=p.pick==='YES'?yesLock:noLock;
+  const edge=p.confidence-chosenMarketAtLock;
+  const certainuYes=p.pick==='YES';
+  const certainuNo=p.pick==='NO';
+  const demoBadge=p.seeded_demo?'':'<span class="yn-live">LIVE AUTOMATED PICK</span>';
+
+  return `<article class="prediction-card yn-card ${resolved?'resolved':''} reveal show" data-status="${esc(p.status)}">
+    <div class="yn-head">
+      <div>
+        <div class="yn-status"><span class="status ${esc(p.status)}">${status}</span>${demoBadge}</div>
+        <h3>${esc(p.question)}</h3>
+      </div>
+      <span class="yn-date">${resolved?'RESOLVED PICK':'LOCKED '+fmtDate(p.locked_at)}</span>
+    </div>
+
+    <div class="yn-market-line">
+      <div class="yn-market-label">
+        <span>POLYMARKET</span>
+        <small>${resolved?'FINAL / LATEST MARKET READING':'MARKET NOW'}</small>
+      </div>
+      <div class="yn-market-meter" aria-label="Polymarket probability">
+        <div class="yn-market-fill" style="width:${yesNow}%"></div>
+        <span class="yn-market-marker" style="left:${yesNow}%"></span>
+      </div>
+      <div class="yn-market-values">
+        <span><b>${Math.round(yesNow)}%</b> YES</span>
+        <span><b>${Math.round(noNow)}%</b> NO</span>
+      </div>
+    </div>
+
+    <div class="yn-choice-title">
+      <span>CERTAINU'S PICK</span>
+      <small>${p.confidence}% CONFIDENCE • ${confidenceLabel(p.confidence)}</small>
+    </div>
+
+    <div class="yn-choices">
+      <div class="yn-choice yes ${certainuYes?'selected':''}">
+        <span class="yn-choice-word">YES</span>
+        <strong>${certainuYes?p.confidence+'%':'—'}</strong>
+        
+      </div>
+      <div class="yn-choice no ${certainuNo?'selected':''}">
+        <span class="yn-choice-word">NO</span>
+        <strong>${certainuNo?p.confidence+'%':'—'}</strong>
+        
+      </div>
+    </div>
+
+    <div class="yn-footer">
+      <div class="yn-meta">
+        <span>MARKET AT LOCK: ${Math.round(yesLock)}% YES / ${Math.round(noLock)}% NO</span>
+        ${p.category?`<span>${esc(p.category)}</span>`:''}
+        <span>${edge>=0?'+':''}${edge.toFixed(1)}% EDGE ON CERTAINU'S SIDE</span>
+        ${resolved?`<span class="yn-result ${p.status}">RESULT: ${esc(p.result)}</span>`:''}
+      </div>
+      <a class="yn-market-link" href="${esc(p.market_url||'https://polymarket.com/')}" target="_blank" rel="noopener">VIEW MARKET ↗</a>
+    </div>
+
+    ${p.reason?`<p class="prediction-reason yn-reason">${esc(p.reason)}</p>`:''}
   </article>`;
 }
 function updateScore(data){
