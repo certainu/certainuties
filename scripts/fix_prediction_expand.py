@@ -41,7 +41,6 @@ js='''<script id="certainu-prediction-expand-fix-js">
       const time=document.querySelector('#predictionTimeFilters .prediction-time-filter.active')?.dataset.filter||'all';
       const topic=document.querySelector('#predictionTopicFilters .prediction-topic-filter.active')?.dataset.topic||'all';
       const bucket=card.dataset.resolutionBucket||'';
-      // ALL means all CURRENT predictions. Resolved calls only appear under RESOLVED.
       const timeMatch=time==='all' ? bucket!=='resolved' : bucket===time;
       const topicMatch=topic==='all'||card.dataset.topicBucket===topic;
       return timeMatch&&topicMatch;
@@ -53,9 +52,16 @@ js='''<script id="certainu-prediction-expand-fix-js">
       matched.forEach((c,i)=>{c.style.display=(expanded||i<3)?'':'none';});
       list.classList.remove('prediction-list-collapsed');
       const needs=matched.length>3;
+      // Keep the entire control visible whenever there are more than 3 matching calls,
+      // including while expanded, so the user always has a SHOW LESS arrow available.
       wrap.hidden=!needs;
       if(label){label.hidden=!needs;label.textContent=expanded?'SHOW LESS':'SHOW MORE';}
-      if(btn){btn.hidden=!needs;btn.setAttribute('aria-expanded',expanded?'true':'false');}
+      if(btn){
+        btn.hidden=!needs;
+        btn.setAttribute('aria-expanded',expanded?'true':'false');
+        btn.setAttribute('aria-label',expanded?'Show less predictions':'Show more predictions');
+        btn.style.display=needs?'':'none';
+      }
     }
 
     if(btn){
@@ -74,9 +80,9 @@ js='''<script id="certainu-prediction-expand-fix-js">
 })();
 </script>'''
 
-if '</head>' in s:s=s.replace('</head>',style+'\n</head>',1)
+if '</head>' in s:s.replace('</head>',style+'\n</head>',1)
 else:raise SystemExit('ERROR: </head> not found')
-if '</body>' in s:s=s.replace('</body>',js+'\n</body>',1)
+if '</body>' in s:s.replace('</body>',js+'\n</body>',1)
 else:raise SystemExit('ERROR: </body> not found')
 P.write_text(s,encoding='utf-8')
-print('Prediction list fixed: max 3 cards collapsed; Show More below list; ALL excludes resolved.')
+print('Prediction list fixed: max 3 collapsed; Show More/Show Less arrow remains visible below predictions.')
