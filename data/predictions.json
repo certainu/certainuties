@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-05T02:27:53.652059Z",
+  "updated_at": "2026-10-05T02:30:27.967610Z",
   "model_version": "rules-v2.7-quick-fill",
   "wallet": "TBA at launch",
   "predictions": [
@@ -1503,6 +1503,81 @@
       "seeded_demo": false,
       "model_version": "pre-live-v1",
       "reason": "PRE-LIVE CALL"
+    },
+    {
+      "id": "4040588",
+      "slug": "will-the-pq-win-a-majority-in-the-2026-quebec-general-election",
+      "question": "Quebec General Election: PQ Wins a Majority?",
+      "pick": "NO",
+      "confidence": 71,
+      "market_probability_at_pick": 33.5,
+      "market_probability_current": 33.5,
+      "edge_at_pick": 4.5,
+      "selection_score": 44.7,
+      "hours_to_resolution_at_pick": 21.5,
+      "market_end_date": "2026-10-05T23:59:00Z",
+      "volume": 23823.338332,
+      "liquidity": 25879.7492,
+      "locked_at": "2026-10-05T02:30:27.967610Z",
+      "updated_at": "2026-10-05T02:30:27.967610Z",
+      "status": "open",
+      "result": null,
+      "resolved_at": null,
+      "market_url": "https://polymarket.com/event/will-the-pq-win-a-majority-in-the-2026-quebec-general-election",
+      "reason": "Rules-v2: market 33.5% YES; volume $23,823; liquidity $25,880; quality 0.66; model 28.6% YES.",
+      "model_version": "rules-v2-one-time-quick-broad",
+      "category": "crypto",
+      "seeded_demo": false
+    },
+    {
+      "id": "5299146",
+      "slug": "cs2-vit-fal2-2026-10-05",
+      "question": "Counter-Strike: Vitality vs Team Falcons (BO3) - ESL Pro League Group Stage",
+      "pick": "YES",
+      "confidence": 68,
+      "market_probability_at_pick": 63.0,
+      "market_probability_current": 63.0,
+      "edge_at_pick": 5.0,
+      "selection_score": 39.37,
+      "hours_to_resolution_at_pick": 20.0,
+      "market_end_date": "2026-10-05T22:30:00Z",
+      "volume": 20238.905528,
+      "liquidity": 145465.8185,
+      "locked_at": "2026-10-05T02:30:27.967610Z",
+      "updated_at": "2026-10-05T02:30:27.967610Z",
+      "status": "open",
+      "result": null,
+      "resolved_at": null,
+      "market_url": "https://polymarket.com/event/cs2-vit-fal2-2026-10-05",
+      "reason": "Rules-v2: market 63.0% YES; volume $20,239; liquidity $145,466; quality 0.70; model 67.8% YES.",
+      "model_version": "rules-v2-one-time-quick-broad",
+      "category": "sports",
+      "seeded_demo": false
+    },
+    {
+      "id": "5180116",
+      "slug": "elon-musk-of-tweets-october-3-october-5-2026-65-89",
+      "question": "Will Elon Musk post 65-89 tweets from October 3 to October 5, 2026?",
+      "pick": "YES",
+      "confidence": 72,
+      "market_probability_at_pick": 67.0,
+      "market_probability_current": 67.0,
+      "edge_at_pick": 5.0,
+      "selection_score": 39.16,
+      "hours_to_resolution_at_pick": 13.5,
+      "market_end_date": "2026-10-05T16:00:00Z",
+      "volume": 67997.292173,
+      "liquidity": 6545.1049,
+      "locked_at": "2026-10-05T02:30:27.967610Z",
+      "updated_at": "2026-10-05T02:30:27.967610Z",
+      "status": "open",
+      "result": null,
+      "resolved_at": null,
+      "market_url": "https://polymarket.com/event/elon-musk-of-tweets-october-3-october-5-2026",
+      "reason": "Rules-v2: market 67.0% YES; volume $67,997; liquidity $6,545; quality 0.67; model 72.0% YES.",
+      "model_version": "rules-v2-one-time-quick-broad",
+      "category": "politics",
+      "seeded_demo": false
     }
   ],
   "stats": {
@@ -1519,5 +1594,19 @@
     "quick_open": 1
   },
   "retired_market_ids": [],
-  "pre_live_calls_label": "PRE-LIVE CALL"
+  "pre_live_calls_label": "PRE-LIVE CALL",
+  "manual_three_quick_predictions_2026_10_05": {
+    "completed_at": "2026-10-05T02:30:27.967610Z",
+    "count": 3,
+    "market_ids": [
+      "4040588",
+      "5299146",
+      "5180116"
+    ],
+    "selection_tier": {
+      "min_activity": 5000,
+      "probability_floor": 3,
+      "edge_required": true
+    }
+  }
 }
