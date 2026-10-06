@@ -153,7 +153,7 @@ footer{padding:44px 0 58px;border-top:1px solid rgba(255,255,255,.18);background
 
 
 /* CERTAINUTIES recent-picks expander */
-.prediction-list-collapsed .prediction-card:nth-child(n+4){display:none}
+.prediction-list-collapsed .prediction-card.prediction-overflow{display:none!important}
 .prediction-expand-wrap{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:22px}
 .prediction-expand-label{
   font-size:12px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;
@@ -1861,19 +1861,20 @@ footer .socials{
 </style>
 
 <style id="certainu-market-lock-enhancements">
-#markets .yn-market-meter-enhanced{margin-top:30px;overflow:visible!important;position:relative}
+#markets .yn-market-meter-enhanced{margin-top:44px;margin-bottom:42px;overflow:visible!important;position:relative}
 #markets .yn-market-meter-enhanced .yn-market-fill{overflow:hidden}
 #markets .yn-now-marker,#markets .yn-lock-marker{position:absolute;top:50%;transform:translate(-50%,-50%);z-index:3}
 #markets .yn-now-marker{width:12px;height:12px;border:3px solid #fff;border-radius:50%;background:#22c55e;box-shadow:0 0 0 2px rgba(15,49,151,.8)}
 #markets .yn-lock-marker{width:5px;height:27px;background:#fff;border-radius:4px;box-shadow:0 0 0 2px rgba(15,49,151,.82),0 0 12px rgba(255,255,255,.55)}
-#markets .yn-now-marker em,#markets .yn-lock-marker em{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);white-space:nowrap;font-style:normal;font-size:9px;font-weight:950;letter-spacing:.04em;padding:5px 8px;border-radius:999px;background:#0b2f91;color:#fff;border:1px solid rgba(255,255,255,.28);box-shadow:0 4px 12px rgba(4,18,76,.25)}
-#markets .yn-now-marker em{color:#7df29e}
-#markets .yn-lock-marker em{bottom:25px;background:#1747df;border-color:rgba(255,255,255,.65)}
-#markets .yn-market-lock-summary{display:flex;align-items:center;justify-content:center;gap:12px;margin:9px 22px 15px;padding:8px 12px;border-radius:10px;background:rgba(5,28,104,.38);font-size:9px;font-weight:850;letter-spacing:.025em;color:rgba(255,255,255,.76)}
+#markets .yn-now-marker em,#markets .yn-lock-marker em{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;font-style:normal;font-size:9px;font-weight:950;letter-spacing:.04em;min-width:112px;text-align:center;padding:7px 14px;border-radius:999px;background:#0b2f91;color:#fff;border:1px solid rgba(255,255,255,.28);box-shadow:0 4px 12px rgba(4,18,76,.25)}
+#markets .yn-now-marker em{top:24px;color:#7df29e}
+#markets .yn-lock-marker em{bottom:27px;background:#1747df;border-color:rgba(255,255,255,.65)}
+#markets .yn-market-lock-summary{display:grid;grid-template-columns:minmax(120px,1fr) 1px minmax(120px,1fr);align-items:center;justify-content:center;gap:16px;width:min(100%,360px);margin:9px 22px 15px;padding:12px 16px;border-radius:10px;background:rgba(5,28,104,.38);font-size:9px;font-weight:850;line-height:1.35;letter-spacing:.025em;color:rgba(255,255,255,.76)}
+#markets .yn-market-lock-summary span{min-width:0;white-space:normal;word-break:normal;overflow-wrap:normal}
 #markets .yn-market-lock-summary b{color:#fff;font-weight:950}
 #markets .yn-market-lock-summary i{width:1px;height:13px;background:rgba(255,255,255,.28)}
 #markets .yn-choice-title small{font-size:12px!important;font-weight:900!important;opacity:.82!important;letter-spacing:.015em}
-@media(max-width:700px){#markets .yn-now-marker em,#markets .yn-lock-marker em{font-size:7px;padding:4px 6px}#markets .yn-market-lock-summary{font-size:7px;gap:7px;margin-left:12px;margin-right:12px}#markets .yn-choice-title small{font-size:10px!important}}
+@media(max-width:700px){#markets .yn-market-meter-enhanced{margin-top:38px;margin-bottom:36px}#markets .yn-now-marker em,#markets .yn-lock-marker em{font-size:7px;min-width:92px;padding:5px 9px}#markets .yn-market-lock-summary{grid-template-columns:minmax(95px,1fr) 1px minmax(95px,1fr);width:min(100%,320px);font-size:7px;gap:9px;margin-left:12px;margin-right:12px;padding:10px 12px}#markets .yn-choice-title small{font-size:10px!important}}
 </style>
 <style>
 #markets .yn-market-meta{display:grid!important;grid-template-columns:1fr 1fr!important;gap:16px!important;width:300px!important;min-width:300px!important;padding:14px 16px!important}
@@ -2171,8 +2172,6 @@ footer .socials{
 
 
 
-
-
 <div class="prediction-time-filters reveal" id="predictionTimeFilters" aria-label="Filter predictions by resolution time">
 <button type="button" class="prediction-time-filter active" data-filter="all">ALL</button>
 <button type="button" class="prediction-time-filter" data-filter="quick">⚡ QUICK ≤24H</button>
@@ -2220,6 +2219,17 @@ footer .socials{
       <div class="receipts-stat"><span>RIGHT</span><strong id="receiptsWins">—</strong></div>
       <div class="receipts-stat"><span>WRONG</span><strong id="receiptsLosses">—</strong></div>
       <div class="receipts-stat"><span>HIT RATE</span><strong id="receiptsAccuracy">—</strong></div>
+    </div>
+    <div class="prediction-topic-filters receipts-topic-filters reveal" id="receiptsTopicFilters" aria-label="Filter receipts by topic">
+      <span class="prediction-filter-label">TOPIC</span>
+      <button type="button" class="prediction-topic-filter active" data-topic="all">ALL TOPICS</button>
+      <button type="button" class="prediction-topic-filter" data-topic="crypto">🪙 CRYPTO</button>
+      <button type="button" class="prediction-topic-filter" data-topic="politics">🏛️ POLITICS</button>
+      <button type="button" class="prediction-topic-filter" data-topic="geopolitics">🌎 GEOPOLITICS</button>
+      <button type="button" class="prediction-topic-filter" data-topic="sports">🏈 SPORTS</button>
+      <button type="button" class="prediction-topic-filter" data-topic="economy">💰 ECONOMY</button>
+      <button type="button" class="prediction-topic-filter" data-topic="culture">🎭 CULTURE</button>
+      <button type="button" class="prediction-topic-filter" data-topic="other">• OTHER</button>
     </div>
     <div class="receipts-ledger reveal" id="receiptsLedger">
       <div class="receipts-row receipts-header"><span>PREDICTION</span><span>CERTAINU SAID</span><span>RESULT</span></div>
@@ -2279,8 +2289,6 @@ function renderPrediction(raw){
   const status=p.status==='won'?'✓ CERTAINU WAS RIGHT':p.status==='lost'?'✕ CERTAINU WAS WRONG':p.status==='void'?'— VOID':'● OPEN';
   const yesNow=Math.max(0,Math.min(100,Number(p.market_probability_current ?? p.market_probability_at_pick ?? 0)));
   const noNow=100-yesNow;
-  const yesLock=Math.max(0,Math.min(100,Number(p.market_probability_at_pick ?? yesNow)));
-  const noLock=100-yesLock;
   const yesLock=Math.max(0,Math.min(100,Number(p.market_probability_at_pick ?? yesNow)));
   const noLock=100-yesLock;
   const chosenMarketAtLock=p.pick==='YES'?yesLock:noLock;
@@ -2382,29 +2390,81 @@ function updateReceiptsFloatingControl(){
 window.addEventListener('scroll',updateReceiptsFloatingControl,{passive:true});
 window.addEventListener('resize',updateReceiptsFloatingControl);
 
+let receiptsSourceData=null;
+let activeReceiptsTopic='all';
+
+function receiptsTopicBucket(raw){
+  const p=normalizePrediction(raw);
+  const saved=String(p.category||'').toLowerCase();
+  if(['crypto','politics','geopolitics','sports','economy','culture','other'].includes(saved)) return saved;
+  const t=((p.question||'')+' '+(p.slug||'')).toLowerCase();
+  if(/bitcoin|\bbtc\b|ethereum|\beth\b|solana|\bsol\b|crypto|dogecoin|\bdoge\b|xrp|ripple|cardano|chainlink|bnb|avalanche|sui|memecoin/.test(t)) return 'crypto';
+  if(/war|strike|attack|iran|israel|russia|ukraine|china|taiwan|nato|military|ceasefire|invasion|country|countries/.test(t)) return 'geopolitics';
+  if(/president|election|congress|senate|house|governor|democrat|republican|trump|vance|cabinet|primary|nominee|vote/.test(t)) return 'politics';
+  if(/nfl|nba|mlb|nhl|soccer|football|basketball|baseball|hockey|tennis|ufc|f1|formula 1|super bowl|world cup|championship|playoffs/.test(t)) return 'sports';
+  if(/fed|interest rate|inflation|gdp|recession|unemployment|jobs report|cpi|economy|tariff|stock market|s&p|nasdaq/.test(t)) return 'economy';
+  if(/movie|film|oscar|grammy|album|song|celebrity|box office|tv|television|streaming|award/.test(t)) return 'culture';
+  return 'other';
+}
+
 function renderResolvedArchive(data){
+  receiptsSourceData=data;
   const ledger=document.getElementById('receiptsLedger');
   if(!ledger) return;
+
   const all=(data.predictions||[]).map(normalizePrediction);
-  const resolved=all.filter(p=>p.status==='won'||p.status==='lost').sort((a,b)=>new Date(b.resolved_at||b.updated_at||b.locked_at||0)-new Date(a.resolved_at||a.updated_at||a.locked_at||0));
+  const allResolved=all
+    .filter(p=>p.status==='won'||p.status==='lost')
+    .sort((a,b)=>new Date(b.resolved_at||b.updated_at||b.locked_at||0)-new Date(a.resolved_at||a.updated_at||a.locked_at||0));
+
+  const resolved=activeReceiptsTopic==='all'
+    ? allResolved
+    : allResolved.filter(p=>receiptsTopicBucket(p)===activeReceiptsTopic);
+
   const wins=resolved.filter(p=>p.status==='won').length;
   const losses=resolved.filter(p=>p.status==='lost').length;
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
-  set('receiptsResolved',resolved.length); set('receiptsWins',wins); set('receiptsLosses',losses); set('receiptsAccuracy',resolved.length?Math.round(wins/resolved.length*100)+'%':'—');
+  set('receiptsResolved',resolved.length);
+  set('receiptsWins',wins);
+  set('receiptsLosses',losses);
+  set('receiptsAccuracy',resolved.length?Math.round(wins/resolved.length*100)+'%':'—');
+
+  const section=document.getElementById('receipts');
+  if(section) section.classList.remove('receipts-expanded');
+
   const header='<div class="receipts-row receipts-header"><span>PREDICTION</span><span>CERTAINU SAID</span><span>RESULT</span></div>';
-  if(!resolved.length){ledger.innerHTML=header+'<div class="receipts-empty">No resolved predictions yet. The first receipt will appear here automatically.</div>';setupReceiptsExpander(0);return;}
-  ledger.innerHTML=header+resolved.map(p=>{
+  if(!resolved.length){
+    ledger.innerHTML=header+'<div class="receipts-empty">No resolved predictions in this category yet.</div>';
+    setupReceiptsExpander(0);
+    return;
+  }
+
+  ledger.innerHTML=header+resolved.map((p,index)=>{
     const won=p.status==='won';
     const date=p.resolved_at?fmtDate(p.resolved_at):'RESOLVED';
-    const index=resolved.indexOf(p);
-    return `<div class="receipts-row${index>=5?' receipts-extra':''}">
+    return `<div class="receipts-row${index>=5?' receipts-extra':''}" data-topic-bucket="${receiptsTopicBucket(p)}">
       <div class="receipts-question">${esc(p.question)}<small>${esc(p.category||'PREDICTION')} • ${esc(date)}</small></div>
       <div class="receipts-pick"><b>${esc(p.pick||'—')}</b>${Number.isFinite(Number(p.confidence))?esc(String(Math.round(Number(p.confidence))))+'%':''}</div>
       <div class="receipts-result ${won?'win':'loss'}">${won?'✓ RIGHT':'✕ WRONG'}</div>
     </div>`;
   }).join('');
+
   setupReceiptsExpander(resolved.length);
 }
+
+function setupReceiptsTopicFilters(){
+  const bar=document.getElementById('receiptsTopicFilters');
+  if(!bar || bar.dataset.bound==='1') return;
+  bar.dataset.bound='1';
+  bar.addEventListener('click',e=>{
+    const b=e.target.closest('.prediction-topic-filter');
+    if(!b) return;
+    activeReceiptsTopic=b.dataset.topic||'all';
+    bar.querySelectorAll('.prediction-topic-filter').forEach(x=>x.classList.toggle('active',x===b));
+    if(receiptsSourceData) renderResolvedArchive(receiptsSourceData);
+  });
+}
+setupReceiptsTopicFilters();
 
 function updateScore(data){
   const ps=(data.predictions||[]).map(normalizePrediction);
@@ -2502,17 +2562,14 @@ async function loadPredictions(){
   function topicBucket(raw){const p=normalizePrediction(raw),saved=String(p.category||'').toLowerCase();if(['crypto','politics','geopolitics','sports','economy','culture','other'].includes(saved))return saved;const t=((p.question||'')+' '+(p.slug||'')).toLowerCase();if(/bitcoin|\bbtc\b|ethereum|\beth\b|solana|\bsol\b|crypto|dogecoin|\bdoge\b|xrp|ripple|cardano|chainlink|bnb|avalanche|sui|memecoin/.test(t))return 'crypto';if(/war|strike|attack|iran|israel|russia|ukraine|china|taiwan|nato|military|ceasefire|invasion|country|countries/.test(t))return 'geopolitics';if(/president|election|congress|senate|house|governor|democrat|republican|trump|vance|cabinet|primary|nominee|vote/.test(t))return 'politics';if(/nfl|nba|mlb|nhl|soccer|football|basketball|baseball|hockey|tennis|ufc|f1|formula 1|super bowl|world cup|championship|playoffs/.test(t))return 'sports';if(/fed|interest rate|inflation|gdp|recession|unemployment|jobs report|cpi|economy|tariff|stock market|s&p|nasdaq/.test(t))return 'economy';if(/movie|film|oscar|grammy|album|song|celebrity|box office|tv|television|streaming|award/.test(t))return 'culture';return 'other';}
   predictionList.innerHTML=predictions.map(p=>renderPrediction(p).replace('<article class="prediction-card','<article data-resolution-bucket="'+resolutionBucket(p)+'" data-topic-bucket="'+topicBucket(p)+'" class="prediction-card')).join('')||'<article class="prediction-card"><h3>No official calls yet.</h3></article>';
   let activeTime='all',activeTopic='all';
-  function applyPredictionFilters(){predictionList.querySelectorAll('.prediction-card').forEach(card=>{const bucket=card.dataset.resolutionBucket;const timeMatch=activeTime==='all' ? bucket!=='resolved' : bucket===activeTime;const topicMatch=activeTopic==='all'||card.dataset.topicBucket===activeTopic;card.style.display=(timeMatch&&topicMatch)?'':'none';});const visible=[...predictionList.querySelectorAll('.prediction-card')].filter(c=>c.style.display!=='none');const collapse=visible.length>3;predictionList.classList.toggle('prediction-list-collapsed',collapse);if(expandBtn){expandBtn.hidden=!collapse;expandBtn.setAttribute('aria-expanded',collapse?'false':'true');}const label=document.getElementById('predictionExpandLabel');if(label){label.hidden=!collapse;label.textContent='SHOW MORE';}}
+  function applyPredictionFilters(){const cards=[...predictionList.querySelectorAll('.prediction-card')];let visibleIndex=0;cards.forEach(card=>{const bucket=card.dataset.resolutionBucket;const timeMatch=activeTime==='all'?bucket!=='resolved':bucket===activeTime;const topicMatch=activeTopic==='all'||card.dataset.topicBucket===activeTopic;const matches=timeMatch&&topicMatch;card.classList.remove('prediction-overflow');if(matches){visibleIndex++;card.style.display='';if(visibleIndex>3)card.classList.add('prediction-overflow');}else card.style.display='none';});const collapse=visibleIndex>3;predictionList.classList.toggle('prediction-list-collapsed',collapse);if(expandBtn){expandBtn.hidden=!collapse;expandBtn.setAttribute('aria-expanded',collapse?'false':'true');}const label=document.getElementById('predictionExpandLabel');if(label){label.hidden=!collapse;label.textContent='SHOW MORE';}}
   const timeBar=document.getElementById('predictionTimeFilters');if(timeBar)timeBar.onclick=e=>{const b=e.target.closest('.prediction-time-filter');if(!b)return;activeTime=b.dataset.filter;timeBar.querySelectorAll('.prediction-time-filter').forEach(x=>x.classList.toggle('active',x===b));applyPredictionFilters();};
   const topicBar=document.getElementById('predictionTopicFilters');if(topicBar)topicBar.onclick=e=>{const b=e.target.closest('.prediction-topic-filter');if(!b)return;activeTopic=b.dataset.topic;topicBar.querySelectorAll('.prediction-topic-filter').forEach(x=>x.classList.toggle('active',x===b));applyPredictionFilters();};
   applyPredictionFilters();
 
-  predictionList.classList.toggle('prediction-list-collapsed',predictions.length>3);
   if(expandBtn){
     const expandWrap=expandBtn.closest('.prediction-expand-wrap');
     const expandLabel=document.getElementById('predictionExpandLabel');
-    expandBtn.hidden=predictions.length<=3;
-    if(expandLabel) expandLabel.hidden=predictions.length<=3;
     expandBtn.setAttribute('aria-expanded','false');
     expandBtn.setAttribute('aria-label','Show more predictions');
     expandBtn.title='Show more predictions';
