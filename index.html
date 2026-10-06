@@ -1861,19 +1861,20 @@ footer .socials{
 </style>
 
 <style id="certainu-market-lock-enhancements">
-#markets .yn-market-meter-enhanced{margin-top:30px;overflow:visible!important;position:relative}
+#markets .yn-market-meter-enhanced{margin-top:44px;margin-bottom:42px;overflow:visible!important;position:relative}
 #markets .yn-market-meter-enhanced .yn-market-fill{overflow:hidden}
 #markets .yn-now-marker,#markets .yn-lock-marker{position:absolute;top:50%;transform:translate(-50%,-50%);z-index:3}
 #markets .yn-now-marker{width:12px;height:12px;border:3px solid #fff;border-radius:50%;background:#22c55e;box-shadow:0 0 0 2px rgba(15,49,151,.8)}
 #markets .yn-lock-marker{width:5px;height:27px;background:#fff;border-radius:4px;box-shadow:0 0 0 2px rgba(15,49,151,.82),0 0 12px rgba(255,255,255,.55)}
-#markets .yn-now-marker em,#markets .yn-lock-marker em{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);white-space:nowrap;font-style:normal;font-size:9px;font-weight:950;letter-spacing:.04em;padding:5px 8px;border-radius:999px;background:#0b2f91;color:#fff;border:1px solid rgba(255,255,255,.28);box-shadow:0 4px 12px rgba(4,18,76,.25)}
-#markets .yn-now-marker em{color:#7df29e}
-#markets .yn-lock-marker em{bottom:25px;background:#1747df;border-color:rgba(255,255,255,.65)}
-#markets .yn-market-lock-summary{display:flex;align-items:center;justify-content:center;gap:12px;margin:9px 22px 15px;padding:8px 12px;border-radius:10px;background:rgba(5,28,104,.38);font-size:9px;font-weight:850;letter-spacing:.025em;color:rgba(255,255,255,.76)}
+#markets .yn-now-marker em,#markets .yn-lock-marker em{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;font-style:normal;font-size:9px;font-weight:950;letter-spacing:.04em;min-width:112px;text-align:center;padding:7px 14px;border-radius:999px;background:#0b2f91;color:#fff;border:1px solid rgba(255,255,255,.28);box-shadow:0 4px 12px rgba(4,18,76,.25)}
+#markets .yn-now-marker em{top:24px;color:#7df29e}
+#markets .yn-lock-marker em{bottom:27px;background:#1747df;border-color:rgba(255,255,255,.65)}
+#markets .yn-market-lock-summary{display:grid;grid-template-columns:minmax(120px,1fr) 1px minmax(120px,1fr);align-items:center;justify-content:center;gap:16px;width:min(100%,360px);margin:9px 22px 15px;padding:12px 16px;border-radius:10px;background:rgba(5,28,104,.38);font-size:9px;font-weight:850;line-height:1.35;letter-spacing:.025em;color:rgba(255,255,255,.76)}
+#markets .yn-market-lock-summary span{min-width:0;white-space:normal;word-break:normal;overflow-wrap:normal}
 #markets .yn-market-lock-summary b{color:#fff;font-weight:950}
 #markets .yn-market-lock-summary i{width:1px;height:13px;background:rgba(255,255,255,.28)}
 #markets .yn-choice-title small{font-size:12px!important;font-weight:900!important;opacity:.82!important;letter-spacing:.015em}
-@media(max-width:700px){#markets .yn-now-marker em,#markets .yn-lock-marker em{font-size:7px;padding:4px 6px}#markets .yn-market-lock-summary{font-size:7px;gap:7px;margin-left:12px;margin-right:12px}#markets .yn-choice-title small{font-size:10px!important}}
+@media(max-width:700px){#markets .yn-market-meter-enhanced{margin-top:38px;margin-bottom:36px}#markets .yn-now-marker em,#markets .yn-lock-marker em{font-size:7px;min-width:92px;padding:5px 9px}#markets .yn-market-lock-summary{grid-template-columns:minmax(95px,1fr) 1px minmax(95px,1fr);width:min(100%,320px);font-size:7px;gap:9px;margin-left:12px;margin-right:12px;padding:10px 12px}#markets .yn-choice-title small{font-size:10px!important}}
 </style>
 <style>
 #markets .yn-market-meta{display:grid!important;grid-template-columns:1fr 1fr!important;gap:16px!important;width:300px!important;min-width:300px!important;padding:14px 16px!important}
@@ -2307,11 +2308,6 @@ function renderPrediction(raw){
       <div class="yn-market-values">
         <span><b>${Math.round(yesNow)}%</b> YES</span>
         <span><b>${Math.round(noNow)}%</b> NO</span>
-      </div>
-      <div class="yn-market-lock-summary">
-        <span>MARKET AT LOCK: <b>${Math.round(yesLock)}% YES</b> / <b>${Math.round(noLock)}% NO</b></span>
-        <i></i>
-        <span>MARKET NOW: <b>${Math.round(yesNow)}% YES</b> / <b>${Math.round(noNow)}% NO</b></span>
       </div>
     </div>
 
