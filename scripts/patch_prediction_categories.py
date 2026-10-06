@@ -44,22 +44,22 @@ old="    locked_at:p.locked_at||p.created_at||'', resolved_at:p.resolved_at||''}
 new="    locked_at:p.locked_at||p.created_at||'', resolved_at:p.resolved_at||'', market_end_date:p.market_end_date||p.end_date||p.endDate||p.resolution_date||'', category:p.category||''};"
 s=s.replace(old,new,1)
 
-# Deterministically replace the prediction render/filter section on EVERY run.
-# This prevents stale ALL-filter logic from surviving older patches.
-start=s.find('  function resolutionBucket(raw){')
-end=s.find("\n  predictionList.classList.toggle('prediction-list-collapsed'",start) if start!=-1 else -1
-if start==-1 or end==-1:
- raise SystemExit('ERROR: could not locate existing prediction filter block')
-block='''  function resolutionBucket(raw){const p=normalizePrediction(raw);const st=String(p.status||'').toLowerCase();if(['won','lost','void','resolved'].includes(st)||p.resolved_at)return 'resolved';const end=Date.parse(p.market_end_date||'');if(!end)return 'long';const h=(end-Date.now())/3600000;if(h<=24)return 'quick';if(h<=72)return 'short';if(h<=168)return 'week';return 'long';}
-  function topicBucket(raw){const p=normalizePrediction(raw),saved=String(p.category||'').toLowerCase();if(['crypto','politics','geopolitics','sports','economy','culture','other'].includes(saved))return saved;const t=((p.question||'')+' '+(p.slug||'')).toLowerCase();if(/bitcoin|\\bbtc\\b|ethereum|\\beth\\b|solana|\\bsol\\b|crypto|dogecoin|\\bdoge\\b|xrp|ripple|cardano|chainlink|bnb|avalanche|sui|memecoin/.test(t))return 'crypto';if(/war|strike|attack|iran|israel|russia|ukraine|china|taiwan|nato|military|ceasefire|invasion|country|countries/.test(t))return 'geopolitics';if(/president|election|congress|senate|house|governor|democrat|republican|trump|vance|cabinet|primary|nominee|vote/.test(t))return 'politics';if(/nfl|nba|mlb|nhl|soccer|football|basketball|baseball|hockey|tennis|ufc|f1|formula 1|super bowl|world cup|championship|playoffs/.test(t))return 'sports';if(/fed|interest rate|inflation|gdp|recession|unemployment|jobs report|cpi|economy|tariff|stock market|s&p|nasdaq/.test(t))return 'economy';if(/movie|film|oscar|grammy|album|song|celebrity|box office|tv|television|streaming|award/.test(t))return 'culture';return 'other';}
-  predictionList.innerHTML=predictions.map(p=>renderPrediction(p).replace('<article class="prediction-card','<article data-resolution-bucket="'+resolutionBucket(p)+'" data-topic-bucket="'+topicBucket(p)+'" class="prediction-card')).join('')||'<article class="prediction-card"><h3>No official calls yet.</h3></article>';
-  let activeTime='all',activeTopic='all';
-  function applyPredictionFilters(){predictionList.querySelectorAll('.prediction-card').forEach(card=>{const bucket=card.dataset.resolutionBucket;const timeMatch=activeTime==='all' ? bucket!=='resolved' : bucket===activeTime;const topicMatch=activeTopic==='all'||card.dataset.topicBucket===activeTopic;card.style.display=(timeMatch&&topicMatch)?'':'none';});const visible=[...predictionList.querySelectorAll('.prediction-card')].filter(c=>c.style.display!=='none');const collapse=visible.length>3;predictionList.classList.toggle('prediction-list-collapsed',collapse);if(expandBtn){expandBtn.hidden=!collapse;expandBtn.setAttribute('aria-expanded',collapse?'false':'true');}const label=document.getElementById('predictionExpandLabel');if(label){label.hidden=!collapse;label.textContent='SHOW MORE';}}
-  const timeBar=document.getElementById('predictionTimeFilters');if(timeBar)timeBar.onclick=e=>{const b=e.target.closest('.prediction-time-filter');if(!b)return;activeTime=b.dataset.filter;timeBar.querySelectorAll('.prediction-time-filter').forEach(x=>x.classList.toggle('active',x===b));applyPredictionFilters();};
-  const topicBar=document.getElementById('predictionTopicFilters');if(topicBar)topicBar.onclick=e=>{const b=e.target.closest('.prediction-topic-filter');if(!b)return;activeTopic=b.dataset.topic;topicBar.querySelectorAll('.prediction-topic-filter').forEach(x=>x.classList.toggle('active',x===b));applyPredictionFilters();};
-  applyPredictionFilters();
-'''
-s=s[:start]+block+s[end:]
+# The live site now owns its prediction filter implementation.
+# Do not replace that JavaScript on every updater run: doing so is brittle and can
+# overwrite newer UI fixes. If the current category system is already present,
+# leave it untouched and continue successfully.
+filter_markers=[
+    'id="predictionTimeFilters"',
+    'id="predictionTopicFilters"',
+    'function resolutionBucket(raw)',
+    'function topicBucket(raw)',
+    'function applyPredictionFilters()',
+    'data-filter="resolved"',
+]
+missing_filter_markers=[x for x in filter_markers if x not in s]
+if missing_filter_markers:
+    raise SystemExit('ERROR: prediction category system is incomplete: '+', '.join(missing_filter_markers))
+print('CERTAINUTIES category system already installed; leaving current filter logic unchanged')
 
 # Verify the production behavior is present before writing.
 required=["activeTime==='all' ? bucket!=='resolved' : bucket===activeTime",'applyPredictionFilters();','data-filter="resolved"']
