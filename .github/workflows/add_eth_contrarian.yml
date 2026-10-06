@@ -1,0 +1,36 @@
+name: Add ETH Contrarian Prediction
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  add-prediction:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Add ETH > $2,700 Oct. 7 contrarian call
+        run: python scripts/add_eth_2700_oct7_contrarian.py
+
+      - name: Commit prediction data
+        run: |
+          if git diff --quiet -- data/predictions.json; then
+            echo "No prediction data change to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/predictions.json
+          git commit -m "Add ETH 2700 Oct 7 contrarian prediction"
+          git push origin HEAD:main
