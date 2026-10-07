@@ -2613,7 +2613,8 @@ async function loadPredictions(){
 
   status.textContent=`${source} • LAST REFRESH ${fmtDate(data.updated_at)} • AUTO-REFRESH ≈ EVERY HOUR • MODEL ${data.model_version||'rules-v2.2'}`;
   if(data.wallet){
-    document.getElementById('walletLabel').textContent='Official CERTAINU wallet: '+data.wallet;
+    const walletLabel=document.getElementById('walletLabel');
+    if(walletLabel) walletLabel.textContent='Official CERTAINU wallet: '+data.wallet;
   }
 }
 loadPredictions();</script>
