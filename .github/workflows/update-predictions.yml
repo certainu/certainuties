@@ -30,6 +30,8 @@ jobs:
           CERTAINU_MIN_EDGE: '0'
           CERTAINU_MIN_VOLUME: '5000'
         run: python scripts/update_predictions.py
+      - name: Validate generated prediction data
+        run: python scripts/validate_predictions.py
       - name: Commit prediction data only
         run: |
           git config user.name "CERTAINU Bot"
