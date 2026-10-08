@@ -1856,3 +1856,10 @@ footer .socials{
 #markets .yn-market-meta span{display:block!important;font-size:9px!important;line-height:1.15!important;white-space:nowrap!important;margin-bottom:5px!important}
 #markets .yn-market-meta strong{display:block!important;font-size:12px!important;line-height:1.2!important;white-space:normal!important;word-break:normal!important;overflow-wrap:normal!important}
 @media(max-width:700px){#markets .yn-market-meta{width:100%!important;min-width:0!important;gap:10px!important;padding:12px!important}#markets .yn-market-meta span{font-size:8px!important}#markets .yn-market-meta strong{font-size:11px!important}}
+
+/* Keep the current-market and at-pick badges on opposite sides of the bar.
+   They remain readable even when their percentage markers coincide. */
+#markets .yn-market-meter-enhanced{margin-top:42px;margin-bottom:43px}
+#markets .yn-now-marker em{top:23px;bottom:auto;color:#7df29e}
+#markets .yn-lock-marker em{bottom:29px;top:auto}
+@media(max-width:700px){#markets .yn-market-meter-enhanced{margin-top:42px;margin-bottom:39px}#markets .yn-now-marker em{top:20px}#markets .yn-lock-marker em{bottom:26px}}
