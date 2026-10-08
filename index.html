@@ -2216,6 +2216,8 @@ footer .socials{
 
 
 
+
+
 <div class="prediction-time-filters reveal" id="predictionTimeFilters" aria-label="Filter predictions by resolution time">
 <button type="button" class="prediction-time-filter active" data-filter="all">ALL</button>
 <button type="button" class="prediction-time-filter" data-filter="quick">⚡ QUICK ≤24H</button>
@@ -2339,6 +2341,8 @@ function renderPrediction(raw){
   const status=p.status==='won'?'✓ CERTAINU WAS RIGHT':p.status==='lost'?'✕ CERTAINU WAS WRONG':p.status==='void'?'— VOID':'● OPEN';
   const yesNow=Math.max(0,Math.min(100,Number(p.market_probability_current ?? p.market_probability_at_pick ?? 0)));
   const noNow=100-yesNow;
+  const yesLock=Math.max(0,Math.min(100,Number(p.market_probability_at_pick ?? yesNow)));
+  const noLock=100-yesLock;
   const yesLock=Math.max(0,Math.min(100,Number(p.market_probability_at_pick ?? yesNow)));
   const noLock=100-yesLock;
   const yesLock=Math.max(0,Math.min(100,Number(p.market_probability_at_pick ?? yesNow)));
