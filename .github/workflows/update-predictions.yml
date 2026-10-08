@@ -30,16 +30,10 @@ jobs:
           CERTAINU_MIN_EDGE: '0'
           CERTAINU_MIN_VOLUME: '5000'
         run: python scripts/update_predictions.py
-      - name: Apply CERTAINUTIES resolution categories
-        run: python scripts/patch_prediction_categories.py
-      - name: Add market lock and current markers
-        run: python scripts/patch_market_lock_display.py
-      - name: Fix prediction Show More placement
-        run: python scripts/fix_prediction_expand.py
-      - name: Commit feed and site changes
+      - name: Commit prediction data only
         run: |
           git config user.name "CERTAINU Bot"
           git config user.email "actions@github.com"
-          git add data/predictions.json index.html
+          git add data/predictions.json
           git diff --cached --quiet || git commit -m "Update CERTAINU predictions"
           git push
