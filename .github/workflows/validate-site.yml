@@ -22,3 +22,5 @@ jobs:
         run: find js -type f -name '*.js' -print0 | xargs -0 -r -n1 node --check
       - name: Check local asset references
         run: python scripts/validate_site_assets.py
+      - name: Verify script loading order
+        run: python scripts/check_script_order.py
