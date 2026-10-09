@@ -51,6 +51,34 @@ try:
             assert page.locator("#markets .yn-lock-marker").count() > 0, "Lock markers missing"
             assert page.locator("#markets .yn-now-marker").count() > 0, "Current markers missing"
             assert page.locator("#predictionExpandBtn").count() == 1, "Prediction expander missing"
+            # All predictions excludes resolved results, and starts collapsed.
+            page.wait_for_function(
+                "() => document.querySelectorAll('#predictionList .prediction-card:not([style*=\\\"display: none\\\"])').length >= 5",
+                timeout=10000,
+            )
+            assert page.locator("#predictionList .prediction-card").count() == 12
+            assert page.locator("#predictionList .prediction-card[data-resolution-bucket='resolved']").count() == 7
+            assert page.locator("#predictionList .prediction-card[data-resolution-bucket='resolved']:visible").count() == 0
+            page.locator("#predictionExpandBtn").click()
+            assert page.locator("#predictionExpandBtn").get_attribute("aria-expanded") == "true"
+            page.locator("#predictionExpandBtn").click()
+            assert page.locator("#predictionExpandBtn").get_attribute("aria-expanded") == "false"
+            page.locator("#predictionTimeFilters [data-filter='resolved']").click()
+            assert page.locator("#predictionList .prediction-card[data-resolution-bucket='resolved']:visible").count() >= 3
+            page.locator("#predictionTimeFilters [data-filter='all']").click()
+            # Receipts have seven resolved entries; the expander must work.
+            page.locator("#receiptsExpandBtn").click()
+            assert page.locator("#receiptsExpandBtn").get_attribute("aria-expanded") == "true"
+            page.locator("#receiptsExpandBtn").click()
+            assert page.locator("#receiptsExpandBtn").get_attribute("aria-expanded") == "false"
+            # At equal probabilities, badge rectangles must not overlap.
+            badges = page.locator("#markets .yn-now-marker em, #markets .yn-lock-marker em")
+            assert badges.count() >= 2
+            now = page.locator("#markets .yn-now-marker em").first.bounding_box()
+            lock = page.locator("#markets .yn-lock-marker em").first.bounding_box()
+            assert now and lock
+            vertical_overlap = min(now["y"]+now["height"], lock["y"]+lock["height"]) - max(now["y"], lock["y"])
+            assert vertical_overlap <= 0, f"Market badges overlap vertically: {vertical_overlap}"
             assert not errors, f"Browser JavaScript errors: {errors}"
             print(f"Chromium {width}px: prediction cards, receipts and markers rendered")
             page.close()
