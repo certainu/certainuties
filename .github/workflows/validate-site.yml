@@ -24,3 +24,9 @@ jobs:
         run: python scripts/validate_site_assets.py
       - name: Verify script loading order
         run: python scripts/check_script_order.py
+      - name: Install browser test tools
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Test site in desktop and mobile Chromium
+        run: python tests/test_browser.py
