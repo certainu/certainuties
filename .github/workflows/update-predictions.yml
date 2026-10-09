@@ -8,6 +8,11 @@ on:
 permissions:
   contents: write
 
+# Prevent overlapping hourly updates from racing to commit prediction data.
+concurrency:
+  group: certainu-prediction-update
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -30,6 +35,14 @@ jobs:
           CERTAINU_MIN_EDGE: '0'
           CERTAINU_MIN_VOLUME: '5000'
         run: python scripts/update_predictions.py
+      - name: Validate generated prediction data
+        run: python scripts/validate_predictions.py
+      - name: Guard against accidental site edits
+        run: |
+          if ! git diff --quiet -- index.html css/ js/ assets/; then
+            echo 'Prediction updater unexpectedly modified website files' >&2
+            exit 1
+          fi
       - name: Commit prediction data only
         run: |
           git config user.name "CERTAINU Bot"

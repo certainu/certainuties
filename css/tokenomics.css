@@ -1,0 +1,613 @@
+/* TOKENOMICS */
+.tokenomics-new-section{
+  padding:110px 0;
+  background:#102b91;
+  color:#fff;
+  border-top:1px solid rgba(255,255,255,.12);
+  border-bottom:1px solid rgba(255,255,255,.12);
+}
+.tokenomics-new-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:30px;
+  margin:16px 0 42px;
+}
+.tokenomics-new-head h2{
+  margin:0;
+  font-size:clamp(54px,8vw,112px);
+  line-height:.88;
+  letter-spacing:-.055em;
+}
+.tokenomics-new-head p{
+  max-width:430px;
+  margin:0;
+  font-size:18px;
+  line-height:1.55;
+  opacity:.82;
+}
+.tokenomics-new-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+.tokenomics-new-card{
+  min-height:170px;
+  padding:26px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:20px;
+  background:rgba(255,255,255,.055);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.tokenomics-new-card span{
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.12em;
+  opacity:.7;
+}
+.tokenomics-new-card strong{
+  font-size:clamp(24px,2.6vw,42px);
+  line-height:1;
+}
+@media(max-width:760px){
+  .tokenomics-new-section{padding:76px 0;}
+  .tokenomics-new-head{display:block;}
+  .tokenomics-new-head p{margin-top:22px;}
+  .tokenomics-new-grid{grid-template-columns:1fr;}
+}
+
+
+.tokenomics-copy-grid{
+  display:grid;
+  grid-template-columns:1.25fr 1fr;
+  gap:14px;
+}
+.tokenomics-copy-card{
+  padding:30px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:20px;
+  background:rgba(255,255,255,.055);
+}
+.tokenomics-copy-card:first-child{
+  grid-row:span 2;
+}
+.tokenomics-copy-card h3{
+  margin:0 0 18px;
+  font-size:clamp(24px,2.3vw,38px);
+  line-height:1;
+  letter-spacing:-.025em;
+}
+.tokenomics-copy-card p{
+  margin:0;
+  font-size:16px;
+  line-height:1.7;
+  opacity:.88;
+}
+.tokenomics-copy-card p + p{
+  margin-top:18px;
+}
+@media(max-width:800px){
+  .tokenomics-copy-grid{grid-template-columns:1fr;}
+  .tokenomics-copy-card:first-child{grid-row:auto;}
+  .tokenomics-copy-card{padding:24px;}
+}
+
+
+/* Tokenomics artwork + copy layout */
+.tokenomics-layout{
+  display:grid;
+  grid-template-columns:minmax(280px,.78fr) minmax(0,1.55fr);
+  gap:24px;
+  align-items:start;
+}
+.tokenomics-money-art{
+  position:sticky;
+  top:100px;
+}
+.tokenomics-money-art img{
+  display:block;
+  width:100%;
+  aspect-ratio:4/5;
+  object-fit:cover;
+  object-position:center;
+  border-radius:24px;
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 24px 65px rgba(3,14,56,.25);
+}
+.tokenomics-layout .tokenomics-copy-grid{
+  grid-template-columns:1fr;
+}
+.tokenomics-layout .tokenomics-copy-card:first-child{
+  grid-row:auto;
+}
+@media(max-width:900px){
+  .tokenomics-layout{grid-template-columns:1fr;}
+  .tokenomics-money-art{position:relative;top:auto;}
+  .tokenomics-money-art img{aspect-ratio:16/9;max-height:430px;}
+}
+
+/* Refine CERTAINUTIES side graphics so they fit cleanly within the viewport. */
+@media(min-width:1251px){
+  #markets .certainuties-side-art,
+  #markets .certainuties-side-art.certainuties-following,
+  #markets .certainuties-side-art.certainuties-at-bottom{
+    top:28px !important;
+    width:clamp(210px,19vw,300px) !important;
+    height:clamp(350px,32vw,500px) !important;
+  }
+  #markets .certainuties-side-art img{
+    object-fit:cover !important;
+    object-position:center top !important;
+  }
+  #markets > .wrap{
+    width:min(calc(100% - 600px),920px) !important;
+  }
+}
+@media(min-width:901px) and (max-width:1250px){
+  #markets .certainuties-side-art,
+  #markets .certainuties-side-art.certainuties-following,
+  #markets .certainuties-side-art.certainuties-at-bottom{
+    top:42px !important;
+    width:clamp(150px,18vw,210px) !important;
+    height:clamp(280px,31vw,390px) !important;
+  }
+  #markets .certainuties-yes{left:8px !important;}
+  #markets .certainuties-no{right:8px !important;}
+  #markets > .wrap{
+    width:min(calc(100% - 330px),860px) !important;
+  }
+}
+
+
+/* Push CERTAINUTIES mascots farther toward the outer screen edges. */
+@media (min-width:1251px){
+  #markets .certainuties-yes,
+  #markets .certainuties-yes.certainuties-following,
+  #markets .certainuties-yes.certainuties-at-bottom{
+    left:4px !important;
+  }
+  #markets .certainuties-no,
+  #markets .certainuties-no.certainuties-following,
+  #markets .certainuties-no.certainuties-at-bottom{
+    right:4px !important;
+  }
+  #markets > .wrap{
+    width:min(calc(100% - 650px),920px) !important;
+  }
+}
+@media (min-width:901px) and (max-width:1250px){
+  #markets .certainuties-yes,
+  #markets .certainuties-yes.certainuties-following,
+  #markets .certainuties-yes.certainuties-at-bottom{
+    left:-28px !important;
+  }
+  #markets .certainuties-no,
+  #markets .certainuties-no.certainuties-following,
+  #markets .certainuties-no.certainuties-at-bottom{
+    right:-28px !important;
+  }
+}
+
+
+.tokenomics-wallet{
+  margin-top:22px;
+  padding:16px 18px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:14px;
+  background:rgba(255,255,255,.06);
+}
+.tokenomics-wallet span{
+  display:block;
+  margin-bottom:8px;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.12em;
+  opacity:.7;
+}
+.tokenomics-wallet code{
+  display:block;
+  font-family:monospace;
+  font-size:13px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+  color:inherit;
+}
+
+
+/* Center each CERTAINUTIES mascot in the side gutter:
+   halfway between the prediction-content edge and the viewport edge. */
+@media (min-width:901px){
+  #markets{
+    --certainuties-content-width: min(calc(100vw - 650px), 920px);
+    --certainuties-art-width: clamp(150px, 18vw, 300px);
+  }
+
+  #markets .certainuties-side-art,
+  #markets .certainuties-side-art.certainuties-following,
+  #markets .certainuties-side-art.certainuties-at-bottom{
+    width:var(--certainuties-art-width) !important;
+  }
+
+  #markets .certainuties-yes,
+  #markets .certainuties-yes.certainuties-following,
+  #markets .certainuties-yes.certainuties-at-bottom{
+    left:calc(
+      (100vw - var(--certainuties-content-width)) / 4
+      - var(--certainuties-art-width) / 2
+    ) !important;
+    right:auto !important;
+  }
+
+  #markets .certainuties-no,
+  #markets .certainuties-no.certainuties-following,
+  #markets .certainuties-no.certainuties-at-bottom{
+    right:calc(
+      (100vw - var(--certainuties-content-width)) / 4
+      - var(--certainuties-art-width) / 2
+    ) !important;
+    left:auto !important;
+  }
+
+  #markets > .wrap{
+    width:var(--certainuties-content-width) !important;
+  }
+}
+
+@media (min-width:901px) and (max-width:1250px){
+  #markets{
+    --certainuties-content-width:min(calc(100vw - 330px),860px);
+    --certainuties-art-width:clamp(145px,17vw,205px);
+  }
+}
+
+
+/* Make CERTAINU's actual decision the visual focus of each prediction card. */
+#markets .pick-line,
+#markets .prediction-pick,
+#markets .certainu-pick,
+#markets [class*="pick-line"]{
+  font-size:clamp(17px,1.45vw,23px) !important;
+  font-weight:800 !important;
+  line-height:1.25 !important;
+}
+
+/* Emphasize the CERTAINU confidence/side display, e.g. "70% NO". */
+#markets .prediction-card [class*="certainu"] strong,
+#markets .prediction-card [class*="certainu"] .value,
+#markets .prediction-card .pick-value,
+#markets .prediction-card .certainty-value{
+  font-size:clamp(30px,3vw,46px) !important;
+  font-weight:950 !important;
+  line-height:1 !important;
+  letter-spacing:-.035em !important;
+}
+
+/* Decision sentence injected by the prediction renderer. */
+#markets .certainu-decision{
+  margin:16px 0 10px;
+  font-size:clamp(20px,1.8vw,29px);
+  font-weight:900;
+  line-height:1.15;
+  letter-spacing:-.02em;
+}
+#markets .certainu-decision .decision-side{
+  font-size:1.18em;
+  font-weight:1000;
+  text-decoration:underline;
+  text-decoration-thickness:3px;
+  text-underline-offset:5px;
+}
+
+
+/* Balance CERTAINU decision text with the prediction headline size. */
+#markets .certainu-decision{
+  font-size:clamp(17px,1.35vw,22px) !important;
+  font-weight:850 !important;
+  line-height:1.22 !important;
+  letter-spacing:-.01em !important;
+}
+#markets .certainu-decision strong{
+  font-size:1em !important;
+  font-weight:900 !important;
+}
+#markets .certainu-decision .decision-side{
+  font-size:1.06em !important;
+  font-weight:950 !important;
+  text-decoration-thickness:2px !important;
+  text-underline-offset:4px !important;
+}
+
+
+/* CERTAINUTIES mascots follow the viewport, but remain clamped inside the dark-blue section. */
+@media (min-width:901px){
+  #markets .certainuties-side-art{
+    will-change:transform;
+    transition:none !important;
+  }
+}
+
+
+/* Smooth CERTAINUTIES mascot motion */
+@media (min-width:901px){
+  #markets .certainuties-side-art{
+    will-change:transform !important;
+    backface-visibility:hidden;
+    transform:translate3d(0,0,0);
+  }
+}
+
+
+.tokenomics-wallet-entry + .tokenomics-wallet-entry{
+  margin-top:16px;
+  padding-top:16px;
+  border-top:1px solid rgba(255,255,255,.14);
+}
+.tokenomics-wallet-entry span{
+  display:block;
+  margin-bottom:8px;
+  font-size:11px;
+  font-weight:900;
+  line-height:1.35;
+  letter-spacing:.10em;
+  opacity:.72;
+}
+
+
+/* CERTAINUTIES side artwork: static faded wallpaper treatment. */
+@media (min-width:901px){
+  #markets .certainuties-side-art,
+  #markets .certainuties-side-art.certainuties-following,
+  #markets .certainuties-side-art.certainuties-at-bottom{
+    position:absolute !important;
+    top:70px !important;
+    bottom:auto !important;
+    transform:none !important;
+    opacity:.20 !important;
+    filter:saturate(.78) contrast(.88) brightness(.90) !important;
+    mix-blend-mode:soft-light;
+    pointer-events:none !important;
+    z-index:0 !important;
+  }
+
+  #markets .certainuties-side-art img{
+    opacity:1 !important;
+    border:none !important;
+    box-shadow:none !important;
+    border-radius:28px !important;
+    -webkit-mask-image:linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 10%,
+      #000 78%,
+      transparent 100%
+    );
+    mask-image:linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 10%,
+      #000 78%,
+      transparent 100%
+    );
+  }
+
+  #markets .certainuties-yes{
+    left:0 !important;
+    right:auto !important;
+  }
+
+  #markets .certainuties-no{
+    right:0 !important;
+    left:auto !important;
+  }
+
+  /* Keep all actual CERTAINUTIES content clearly above the faded artwork. */
+  #markets > .wrap{
+    position:relative !important;
+    z-index:2 !important;
+  }
+}
+
+/* Hide wallpaper art on smaller screens where it would compete with the cards. */
+@media (max-width:900px){
+  #markets .certainuties-side-art{
+    display:none !important;
+  }
+}
+
+
+/* CERTAINUTIES wallpaper art: larger and more visible. */
+@media (min-width:901px){
+  #markets .certainuties-side-art,
+  #markets .certainuties-side-art.certainuties-following,
+  #markets .certainuties-side-art.certainuties-at-bottom{
+    top:20px !important;
+    width:clamp(330px,30vw,560px) !important;
+    height:clamp(620px,78vh,900px) !important;
+    opacity:.38 !important;
+    filter:saturate(.92) contrast(.94) brightness(.96) !important;
+    mix-blend-mode:soft-light !important;
+    overflow:hidden !important;
+    border-radius:0 !important;
+  }
+
+  #markets .certainuties-side-art img{
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+    object-position:center top !important;
+    border-radius:0 !important;
+    -webkit-mask-image:linear-gradient(
+      to bottom,
+      rgba(0,0,0,.72) 0%,
+      #000 8%,
+      #000 84%,
+      transparent 100%
+    ) !important;
+    mask-image:linear-gradient(
+      to bottom,
+      rgba(0,0,0,.72) 0%,
+      #000 8%,
+      #000 84%,
+      transparent 100%
+    ) !important;
+  }
+
+  #markets .certainuties-yes{
+    left:-35px !important;
+  }
+  #markets .certainuties-no{
+    right:-35px !important;
+  }
+}
+
+@media (min-width:1400px){
+  #markets .certainuties-side-art,
+  #markets .certainuties-side-art.certainuties-following,
+  #markets .certainuties-side-art.certainuties-at-bottom{
+    width:min(34vw,620px) !important;
+    height:min(88vh,940px) !important;
+  }
+}
+
+
+/* FINAL CERTAINUTIES wallpaper: completely static and fills more of the section. */
+@media (min-width:901px){
+  #markets{
+    position:relative !important;
+    overflow:hidden !important;
+  }
+
+  #markets .certainuties-side-art,
+  #markets .certainuties-side-art.certainuties-following,
+  #markets .certainuties-side-art.certainuties-at-bottom{
+    position:absolute !important;
+    top:0 !important;
+    bottom:auto !important;
+    width:clamp(430px,38vw,720px) !important;
+    height:min(1100px,100%) !important;
+    min-height:780px !important;
+    transform:none !important;
+    translate:none !important;
+    transition:none !important;
+    animation:none !important;
+    opacity:.40 !important;
+    overflow:hidden !important;
+    pointer-events:none !important;
+    z-index:0 !important;
+  }
+
+  #markets .certainuties-side-art img{
+    width:100% !important;
+    height:100% !important;
+    min-height:780px !important;
+    object-fit:cover !important;
+    object-position:center top !important;
+    transform:none !important;
+    transition:none !important;
+    animation:none !important;
+  }
+
+  #markets .certainuties-yes{
+    left:-90px !important;
+    right:auto !important;
+  }
+
+  #markets .certainuties-no{
+    right:-90px !important;
+    left:auto !important;
+  }
+
+  #markets > .wrap{
+    position:relative !important;
+    z-index:2 !important;
+  }
+}
+
+@media (min-width:1400px){
+  #markets .certainuties-side-art,
+  #markets .certainuties-side-art.certainuties-following,
+  #markets .certainuties-side-art.certainuties-at-bottom{
+    width:min(42vw,800px) !important;
+    height:min(1200px,100%) !important;
+  }
+}
+
+
+/* CERTAINUTIES cards: ~40% more solid so wallpaper shows through less. */
+#markets .prediction-card,
+#markets .market-card,
+#markets .score-card,
+#markets .stat-card,
+#markets [class*="prediction-card"],
+#markets [class*="market-card"]{
+  background-color:rgba(24,67,190,.94) !important;
+  backdrop-filter:blur(5px) !important;
+  -webkit-backdrop-filter:blur(5px) !important;
+}
+
+/* Inner information bubbles within each prediction. */
+#markets .prediction-card > div,
+#markets .market-card > div{
+  --certainu-card-solid:1;
+}
+#markets .prediction-card [class*="box"],
+#markets .prediction-card [class*="panel"],
+#markets .prediction-card [class*="stat"],
+#markets .market-card [class*="box"],
+#markets .market-card [class*="panel"],
+#markets .market-card [class*="stat"]{
+  background-color:rgba(255,255,255,.075) !important;
+}
+
+
+/* Color-code CERTAINU's prediction bubble by decision. */
+#markets .certainu-choice-yes{
+  background:linear-gradient(135deg,rgba(22,163,74,.92),rgba(21,128,61,.96)) !important;
+  border-color:rgba(134,239,172,.70) !important;
+  box-shadow:0 8px 24px rgba(22,163,74,.20) !important;
+}
+#markets .certainu-choice-no{
+  background:linear-gradient(135deg,rgba(220,38,38,.92),rgba(185,28,28,.96)) !important;
+  border-color:rgba(252,165,165,.72) !important;
+  box-shadow:0 8px 24px rgba(220,38,38,.20) !important;
+}
+#markets .certainu-choice-yes *,
+#markets .certainu-choice-no *{
+  color:#fff !important;
+}
+
+
+/* FINAL: only the compact CERTAINU prediction value bubble gets YES/NO color. */
+#markets .certainu-value-highlight-yes{
+  background:linear-gradient(135deg,rgba(22,163,74,.94),rgba(21,128,61,.97)) !important;
+  border-color:rgba(134,239,172,.68) !important;
+}
+#markets .certainu-value-highlight-no{
+  background:linear-gradient(135deg,rgba(220,38,38,.94),rgba(185,28,28,.97)) !important;
+  border-color:rgba(252,165,165,.70) !important;
+}
+#markets .certainu-value-highlight-yes *,
+#markets .certainu-value-highlight-no *{
+  color:#fff !important;
+}
+
+
+/* Robust YES/NO highlight for the exact CERTAINU value card. */
+#markets .certainu-pick-green{
+  background:linear-gradient(135deg,#16a34a,#15803d) !important;
+  border-color:rgba(134,239,172,.78) !important;
+  box-shadow:0 7px 22px rgba(22,163,74,.22) !important;
+}
+#markets .certainu-pick-red{
+  background:linear-gradient(135deg,#dc2626,#b91c1c) !important;
+  border-color:rgba(252,165,165,.78) !important;
+  box-shadow:0 7px 22px rgba(220,38,38,.22) !important;
+}
+#markets .certainu-pick-green *,
+#markets .certainu-pick-red *{
+  color:#fff !important;
+}
+
+
