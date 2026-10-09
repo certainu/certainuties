@@ -79,6 +79,9 @@ try:
             assert now and lock
             vertical_overlap = min(now["y"]+now["height"], lock["y"]+lock["height"]) - max(now["y"], lock["y"])
             assert vertical_overlap <= 0, f"Market badges overlap vertically: {vertical_overlap}"
+            screenshots = ROOT / "test-artifacts"
+            screenshots.mkdir(exist_ok=True)
+            page.screenshot(path=str(screenshots / f"site-{width}.png"), full_page=True)
             assert not errors, f"Browser JavaScript errors: {errors}"
             print(f"Chromium {width}px: prediction cards, receipts and markers rendered")
             page.close()

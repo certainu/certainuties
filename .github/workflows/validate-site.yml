@@ -30,3 +30,11 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Test site in desktop and mobile Chromium
         run: python tests/test_browser.py
+      - name: Save browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-browser-screenshots
+          path: test-artifacts/
+          if-no-files-found: ignore
+          retention-days: 7
