@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: '7 * * * *'
   workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/update_predictions.py'
+      - '.github/workflows/update-predictions.yml'
 
 permissions:
   contents: write
@@ -27,13 +31,13 @@ jobs:
         env:
           CERTAINU_MAX_OPEN: '100'
           CERTAINU_MAX_RESOLVED: '1000'
-          CERTAINU_MAX_NEW_PER_RUN: '1'
+          CERTAINU_MAX_NEW_PER_RUN: '3'
           CERTAINU_MAX_VISIBLE: '1100'
           CERTAINU_MAX_LONG_OPEN: '6'
           CERTAINU_MAX_CRYPTO_OPEN: '24'
           CERTAINU_CRYPTO_BONUS: '6'
           CERTAINU_MIN_EDGE: '0'
-          CERTAINU_MIN_VOLUME: '5000'
+          CERTAINU_MIN_VOLUME: '1000'
         run: python scripts/update_predictions.py
       - name: Validate generated prediction data
         run: python scripts/validate_predictions.py
