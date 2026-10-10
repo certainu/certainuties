@@ -289,9 +289,10 @@ async function loadPredictions(){
 
   updateScore(data);
   renderResolvedArchive(data);
-  const predictions=(data.predictions||[]).slice().sort((a,b)=>
-    new Date(b.locked_at||b.created_at||0)-new Date(a.locked_at||a.created_at||0)
-  );
+  // Always display the most recently made CERTAINU picks first, regardless of feed order.
+  // updated_at is deliberately excluded: hourly refreshes must not reorder old picks.
+  const pickTime=p=>Date.parse(p.locked_at||p.created_at||'')||0;
+  const predictions=(data.predictions||[]).slice().sort((a,b)=>pickTime(b)-pickTime(a));
   const predictionList=document.getElementById('predictionList');
   const expandBtn=document.getElementById('predictionExpandBtn');
   function resolutionBucket(raw){const p=normalizePrediction(raw);const st=String(p.status||'').toLowerCase();if(['won','lost','void','resolved'].includes(st)||p.resolved_at)return 'resolved';const end=Date.parse(p.market_end_date||'');if(!end)return 'long';const h=(end-Date.now())/3600000;if(h<=24)return 'quick';if(h<=72)return 'short';if(h<=168)return 'week';return 'long';}
