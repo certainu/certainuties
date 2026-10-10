@@ -90,14 +90,20 @@ def status(p):
 def demo(p):return bool(p.get('seeded_demo',False))
 def main():
  state=json.loads(DATA.read_text()) if DATA.exists() else {'predictions':[]};preds=state.setdefault('predictions',[]);retired={str(x) for x in state.setdefault('retired_market_ids',[])};real=[p for p in preds if not demo(p)];byid={str(p.get('id')):p for p in real if p.get('id') is not None};active=[];seen=set()
- for offset in range(0,1000,100):
-  try:page=get_json(GAMMA+'?'+urllib.parse.urlencode({'active':'true','closed':'false','limit':'100','offset':offset}))
-  except Exception as e:print(f'[scan] stopped at offset {offset}: {e}');break
-  if not page:break
-  for m in page:
-   mid=str(m.get('id') or '')
-   if mid and mid not in seen:seen.add(mid);active.append(m)
-  if len(page)<100:break
+ # Sample several active-market pages, including newest markets, rather than
+ # relying exclusively on the first 1,000 returned by the API.
+ scan_pages=int(os.getenv('CERTAINU_SCAN_PAGES','30'))
+ for order in ('id','volumeNum'):
+  for offset in range(0,scan_pages*100,100):
+   params={'active':'true','closed':'false','limit':'100','offset':offset,'order':order,'ascending':'false'}
+   try:page=get_json(GAMMA+'?'+urllib.parse.urlencode(params))
+   except Exception as e:print(f'[scan] {order} stopped at offset {offset}: {e}');break
+   if not page:break
+   for m in page:
+    mid=str(m.get('id') or '')
+    if mid and mid not in seen:seen.add(mid);active.append(m)
+   if len(page)<100:break
+ print(f'[scan] unique_active_markets={len(active)}')
  active_by={str(m.get('id')):m for m in active};resolved=0
  for p in real:
   if status(p)!='open':continue
@@ -112,19 +118,21 @@ def main():
    p['result']=outcome;p['status']='won' if outcome==str(p.get('pick','')).upper() else 'lost';p['resolved_at']=now();resolved+=1
  real_resolved=sum(status(p) in('won','lost') for p in real)
  if real_resolved>=DEMO_REMOVAL_REAL_RESOLVED:preds[:]=[p for p in preds if not demo(p)]
- real=[p for p in preds if not demo(p)];byid={str(p.get('id')):p for p in real if p.get('id') is not None};open_preds=[p for p in real if status(p)=='open'];open_count=len(open_preds);long_open=sum(bucket_pred(p)=='long' for p in open_preds);quick_open=sum(bucket_pred(p)=='quick' for p in open_preds);crypto_open=sum(crypto_pred(p) for p in open_preds);candidates=[];bucket_counts={'quick':0,'short':0,'week':0,'long':0};crypto_qualifying=0
+ real=[p for p in preds if not demo(p)];byid={str(p.get('id')):p for p in real if p.get('id') is not None};open_preds=[p for p in real if status(p)=='open'];open_count=len(open_preds);long_open=sum(bucket_pred(p)=='long' for p in open_preds);quick_open=sum(bucket_pred(p)=='quick' for p in open_preds);crypto_open=sum(crypto_pred(p) for p in open_preds);candidates=[];bucket_counts={'quick':0,'short':0,'week':0,'long':0};crypto_qualifying=0;rejections={'already_seen':0,'low_volume':0,'extreme_odds':0,'expired':0,'long_cap':0,'crypto_cap':0,'low_edge':0}
  if open_count<MAX_OPEN:
   for m in active:
    mid=str(m.get('id') or '');v=volume(m);l=liquidity(m)
-   if not mid or mid in byid or mid in retired or not(v>=MIN_VOLUME or(v==0 and l>=MIN_VOLUME)):continue
+   if not mid or mid in byid or mid in retired:rejections['already_seen']+=1;continue
+   if not(v>=MIN_VOLUME or(v==0 and l>=MIN_VOLUME)):rejections['low_volume']+=1;continue
    p0=yes_prob(m)
-   if p0<=3 or p0>=97:continue
+   if p0<=3 or p0>=97:rejections['extreme_odds']+=1;continue
    h=hours_left(m);b=bucket_hours(h)
-   if b=='expired' or(b=='long' and long_open>=MAX_LONG_OPEN):continue
+   if b=='expired':rejections['expired']+=1;continue
+   if b=='long' and long_open>=MAX_LONG_OPEN:rejections['long_cap']+=1;continue
    iscrypto=crypto_market(m)
-   if iscrypto and crypto_open>=MAX_CRYPTO_OPEN:continue
+   if iscrypto and crypto_open>=MAX_CRYPTO_OPEN:rejections['crypto_cap']+=1;continue
    pick,conf,edge,reason,yesp,v,l=model(m)
-   if edge<MIN_EDGE:continue
+   if edge<MIN_EDGE:rejections['low_edge']+=1;continue
    uncertainty=2 if 10<=p0<=90 else -2;quality=min(2,math.log10(max(v,1))/4)+min(1.5,math.log10(max(l,1))/4 if l else 0);quick_boost=QUICK_BONUS if b=='quick' and quick_open<QUICK_TARGET else 0;score=edge+speed_score(h)+uncertainty+quality+quick_boost+(CRYPTO_BONUS if iscrypto else 0);candidates.append((score,edge,v,m,pick,conf,reason,yesp,l,h,b,iscrypto));bucket_counts[b]+=1;crypto_qualifying+=int(iscrypto)
  candidates.sort(key=lambda x:(x[0],x[1],x[2]),reverse=True);slots=max(0,min(MAX_NEW,MAX_OPEN-open_count));created=0
  for score,edge,v,m,pick,conf,reason,yesp,l,h,b,iscrypto in candidates:
@@ -138,5 +146,5 @@ def main():
  for p in preds:
   if id(p) not in kept_ids and not demo(p) and p.get('id') is not None:retired.add(str(p['id']))
  preds[:]=kept_open+kept_resolved+other_items
- state['retired_market_ids']=sorted(retired);real=[p for p in preds if not demo(p)];wins=sum(status(p)=='won' for p in real);losses=sum(status(p)=='lost' for p in real);ropen=sum(status(p)=='open' for p in real);state['updated_at']=now();state['model_version']=MODEL_VERSION;state['stats']={'real_wins':wins,'real_losses':losses,'real_resolved':wins+losses,'real_open':ropen,'real_accuracy':round(wins/(wins+losses)*100,1) if wins+losses else None,'seeded_demo_count':sum(demo(p) for p in preds),'visible_predictions':len(preds),'max_open':MAX_OPEN,'max_resolved':MAX_RESOLVED,'crypto_open':sum(crypto_pred(p) for p in real if status(p)=='open'),'quick_open':sum(bucket_pred(p)=='quick' for p in real if status(p)=='open')};DATA.write_text(json.dumps(state,indent=2)+'\n');print(f'[scan] qualifying={bucket_counts}; crypto_qualifying={crypto_qualifying}; quick_open={quick_open}/{QUICK_TARGET}; crypto_open={crypto_open}/{MAX_CRYPTO_OPEN}; long_open={long_open}/{MAX_LONG_OPEN}');print(f'[run] candidates={len(candidates)}, created={created}, resolved={resolved}, open={ropen}/{MAX_OPEN}, resolved_kept={wins+losses}/{MAX_RESOLVED}, visible={len(preds)}')
+ state['retired_market_ids']=sorted(retired);real=[p for p in preds if not demo(p)];wins=sum(status(p)=='won' for p in real);losses=sum(status(p)=='lost' for p in real);ropen=sum(status(p)=='open' for p in real);state['updated_at']=now();state['model_version']=MODEL_VERSION;state['stats']={'real_wins':wins,'real_losses':losses,'real_resolved':wins+losses,'real_open':ropen,'real_accuracy':round(wins/(wins+losses)*100,1) if wins+losses else None,'seeded_demo_count':sum(demo(p) for p in preds),'visible_predictions':len(preds),'max_open':MAX_OPEN,'max_resolved':MAX_RESOLVED,'crypto_open':sum(crypto_pred(p) for p in real if status(p)=='open'),'quick_open':sum(bucket_pred(p)=='quick' for p in real if status(p)=='open')};DATA.write_text(json.dumps(state,indent=2)+'\n');print(f'[scan] qualifying={bucket_counts}; rejected={rejections}; crypto_qualifying={crypto_qualifying}; quick_open={quick_open}/{QUICK_TARGET}; crypto_open={crypto_open}/{MAX_CRYPTO_OPEN}; long_open={long_open}/{MAX_LONG_OPEN}');print(f'[run] candidates={len(candidates)}, created={created}, resolved={resolved}, open={ropen}/{MAX_OPEN}, resolved_kept={wins+losses}/{MAX_RESOLVED}, visible={len(preds)}')
 if __name__=='__main__':main()
