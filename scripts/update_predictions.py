@@ -103,6 +103,26 @@ def main():
     mid=str(m.get('id') or '')
     if mid and mid not in seen:seen.add(mid);active.append(m)
    if len(page)<100:break
+ # Explicitly discover the three requested ETH threshold contracts using event data.
+ # Never invent IDs or prices: only Gamma API records may become predictions.
+ targeted=[('ethereum-above-on-october-11-2026','2500'),
+           ('ethereum-above-on-october-12-2026','2600'),
+           ('ethereum-above-on-october-13-2026','2600')]
+ for event_slug,strike in targeted:
+  try:
+   events=get_json('https://gamma-api.polymarket.com/events?'+urllib.parse.urlencode({'slug':event_slug}))
+   matches=0
+   for event in events if isinstance(events,list) else []:
+    for m in event.get('markets',[]):
+     slug=str(m.get('slug') or '').lower()
+     # Verify exact strike, date, active status, and binary outcome structure.
+     if not slug.startswith('ethereum-above-'+strike+'-on-') or event_slug.split('-on-')[-1] not in slug:continue
+     if m.get('closed') is True or m.get('active') is not True:continue
+     if {str(v).upper() for v in arr(m.get('outcomes'))}!={'YES','NO'}:continue
+     mid=str(m.get('id') or '')
+     if mid and mid not in seen:seen.add(mid);active.append(m);matches+=1
+   print(f'[target] {event_slug} strike={strike}: added_to_scan={matches}')
+  except Exception as e:print(f'[target] {event_slug}: API error {e}')
  print(f'[scan] unique_active_markets={len(active)}')
  active_by={str(m.get('id')):m for m in active};resolved=0
  for p in real:
