@@ -67,6 +67,21 @@ def market_url(m):
  ev=m.get('events') or [];es=str((ev[0] or {}).get('slug') or '') if isinstance(ev,list) and ev else '';slug=es or str(m.get('eventSlug') or m.get('slug') or '');return f'https://polymarket.com/event/{slug}' if slug else 'https://polymarket.com/'
 def model(m):
  p=yes_prob(m);v=volume(m);l=liquidity(m);vq=min(1,math.log10(max(v,10))/7);lq=min(1,math.log10(max(l,10))/6) if l else vq*.75;q=max(.2,min(1,.65*vq+.35*lq));ext=(-7*q if p>=80 else 7*q if p<=20 else -3.5*q if p>=68 else 3.5*q if p<=32 else 0);center=abs(p-50)/50;conv=(5.2+2.8*q)*(.55+.45*center);est=max(5,min(95,p+ext+(1 if p>=50 else -1)*conv));pick='YES' if est>=50 else 'NO';conf=round(est if pick=='YES' else 100-est);side=p if pick=='YES' else 100-p;return pick,conf,conf-side,f'Rules-v2: market {p:.1f}% YES; volume ${v:,.0f}; liquidity ${l:,.0f}; quality {q:.2f}; model {est:.1f}% YES.',p,v,l
+def confirmed_outcome(m):
+ # Only score closed, fully settled binary markets. Never infer a result from a live price.
+ if m.get('closed') is not True:return None
+ resolution=str(m.get('umaResolutionStatus') or '').lower()
+ if resolution and resolution not in ('resolved','finalized'):return None
+ outcomes=arr(m.get('outcomes'));prices=arr(m.get('outcomePrices'))
+ if len(outcomes)!=2 or len(prices)!=2:return None
+ labels=[str(x).strip().upper() for x in outcomes]
+ if set(labels)!={'YES','NO'}:return None
+ try:values=[float(x) for x in prices]
+ except (TypeError,ValueError):return None
+ winners=[i for i,v in enumerate(values) if v>=0.999999]
+ losers=[i for i,v in enumerate(values) if v<=0.000001]
+ if len(winners)!=1 or len(losers)!=1 or winners[0]==losers[0]:return None
+ return labels[winners[0]]
 def status(p):
  s=str(p.get('status','')).lower()
  if s=='resolved':
@@ -92,9 +107,9 @@ def main():
    except:m=None
   if not m:continue
   cur=yes_prob(m);p['market_probability_current']=round(cur,2);p['volume']=volume(m);p['updated_at']=now()
-  if m.get('closed') or cur>=99 or cur<=1:
-   outcome='YES' if cur>=99 else 'NO' if cur<=1 else None
-   if outcome:p['result']=outcome;p['status']='won' if outcome==str(p.get('pick','')).upper() else 'lost';p['resolved_at']=now();resolved+=1
+  outcome=confirmed_outcome(m)
+  if outcome:
+   p['result']=outcome;p['status']='won' if outcome==str(p.get('pick','')).upper() else 'lost';p['resolved_at']=now();resolved+=1
  real_resolved=sum(status(p) in('won','lost') for p in real)
  if real_resolved>=DEMO_REMOVAL_REAL_RESOLVED:preds[:]=[p for p in preds if not demo(p)]
  real=[p for p in preds if not demo(p)];byid={str(p.get('id')):p for p in real if p.get('id') is not None};open_preds=[p for p in real if status(p)=='open'];open_count=len(open_preds);long_open=sum(bucket_pred(p)=='long' for p in open_preds);quick_open=sum(bucket_pred(p)=='quick' for p in open_preds);crypto_open=sum(crypto_pred(p) for p in open_preds);candidates=[];bucket_counts={'quick':0,'short':0,'week':0,'long':0};crypto_qualifying=0
